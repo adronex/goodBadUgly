@@ -1,9 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+
+    private GameLogic.GameCore gameCore;
     
     // Use this for initialization
     void Start()
