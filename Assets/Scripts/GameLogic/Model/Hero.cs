@@ -13,10 +13,10 @@
     private BodyPart[] bodyParts;
     #endregion
     #region Properties
-    public HeroType Type
-    {
-        get { return type; }
-    }
+//    public HeroType Type
+//    {
+//        get { return type; }
+//    }
 
     public int MaxHealth
     {
@@ -36,22 +36,15 @@
         }
     }
 
-    public int MaxAmmo
-    {
-        get { return maxAmmo; }
-    }
+//    public int MaxAmmo
+//    {
+//        get { return maxAmmo; }
+//    }
 
     public int CurrentAmmo
     {
         get { return currentAmmo; }
-        set
-        {
-            currentAmmo = value;
-            if (AmmoChangedEvent != null)
-            {
-                AmmoChangedEvent(type, CurrentAmmo);
-            }
-        }
+
     }
 
     public BodyPart[] BodyParts
@@ -61,7 +54,8 @@
 
     #endregion
     #region Public methods
-    public void Init(HeroType type, int health, int ammo)
+
+    public Hero(HeroType type, int health, int ammo)
     {
         this.type = type;
         maxHealth = health;
@@ -73,6 +67,15 @@
         {
             bodyParts = BodyPart.FindEnemyParts();
         }
+    }
+
+    public void OnShoot()
+    {
+        currentAmmo--;
+        if (AmmoChangedEvent != null)
+        {
+            AmmoChangedEvent(type, CurrentAmmo);
+        }      
     }
     #endregion
 

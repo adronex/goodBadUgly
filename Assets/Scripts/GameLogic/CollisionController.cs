@@ -5,16 +5,16 @@ public static class CollisionController
     #region Public methods
     public static int CheckCollision(Vector2 bulletPos, BodyPart[] bodyParts)
     {
-        for (int i = 0; i < bodyParts.Length; i++)
+        foreach (var bodyPart in bodyParts)
         {
-            var points = GetRealPoints(bodyParts[i]);
+            var points = GetRealPoints(bodyPart);
 
             var min = float.MaxValue;
             var max = float.MinValue;
-            int minId = 0;
-            int maxId = 0;
+            var minId = 0;
+            var maxId = 0;
 
-            for (int j = 0; j < points.Length; j++)
+            for (var j = 0; j < points.Length; j++)
             {
                 var dist = Vector2.Distance(points[j], bulletPos);
                 if (dist < min)
@@ -33,9 +33,10 @@ public static class CollisionController
 
             if (IsBelongToHeroPart(bulletPos, possiblePoints))
             {
-                return Random.Range(bodyParts[i].MinDamage, bodyParts[i].MaxDamage);
+                return Random.Range(bodyPart.MinDamage, bodyPart.MaxDamage);
             }
         }
+
         return -1;
     }
     #endregion

@@ -6,13 +6,13 @@ namespace GameCore.Model
     {
         private Hero ownHero;
         private Hero enemyHero;
-        private Vector2Int ownHeroPosition;
-        private Vector2Int enemyHeroPosition;
+//        private Vector2Int ownHeroPosition;
+//        private Vector2Int enemyHeroPosition;
 
         public BattleField()
         {
-            ownHero = new Hero();
-            enemyHero = new Hero();
+            ownHero = new Hero(HeroType.Own, 100, 6);
+            enemyHero = new Hero(HeroType.Enemy, 100, 6);
         }
 
         public Hero OwnHero
@@ -25,14 +25,14 @@ namespace GameCore.Model
             get { return enemyHero; }
         }
 
-        public Vector2Int OwnHeroPosition
-        {
-            get { return ownHeroPosition; }
-        }
-
-        public Vector2Int EnemyHeroPositionX
-        {
-            get { return enemyHeroPosition; }
-        }
+//        public Vector2Int OwnHeroPosition
+//        {
+//            get { return ownHeroPosition; }
+//        }
+//
+//        public Vector2Int EnemyHeroPositionX
+//        {
+//            get { return enemyHeroPosition; }
+//        }
     }
 }
