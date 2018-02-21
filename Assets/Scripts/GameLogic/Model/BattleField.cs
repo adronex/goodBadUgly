@@ -1,13 +1,19 @@
-﻿namespace GameCore.Model
+﻿using UnityEngine;
+
+namespace GameCore.Model
 {
     public class BattleField
     {
         private Hero ownHero;
         private Hero enemyHero;
-        private int ownHeroPositionX;
-        private int ownHeroPositionY;
-        private int enemyHeroPositionX;
-        private int enemyHeroPositionY;
+        private Vector2Int ownHeroPosition;
+        private Vector2Int enemyHeroPosition;
+
+        public BattleField()
+        {
+            ownHero = new Hero();
+            enemyHero = new Hero();
+        }
 
         public Hero OwnHero
         {
@@ -19,24 +25,14 @@
             get { return enemyHero; }
         }
 
-        public int OwnHeroPositionX
+        public Vector2Int OwnHeroPosition
         {
-            get { return ownHeroPositionX; }
+            get { return ownHeroPosition; }
         }
 
-        public int OwnHeroPositionY
+        public Vector2Int EnemyHeroPositionX
         {
-            get { return ownHeroPositionY; }
-        }
-
-        public int EnemyHeroPositionX
-        {
-            get { return enemyHeroPositionX; }
-        }
-
-        public int EnemyHeroPositionY
-        {
-            get { return enemyHeroPositionY; }
+            get { return enemyHeroPosition; }
         }
     }
 }

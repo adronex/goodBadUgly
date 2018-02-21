@@ -1,4 +1,4 @@
-﻿public enum Hero
+﻿public enum HeroType
 {
     Own,
     Enemy,

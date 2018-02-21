@@ -1,4 +1,4 @@
-﻿public enum Area
+﻿public enum AreaType
 {
     AimArea,
     HeroArea,

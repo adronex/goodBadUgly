@@ -2,11 +2,19 @@
 
 public class Bullet : MonoBehaviour
 {
+    #region Fields
     private const float speed = 15f;
-
+    #endregion
+    #region Properties
+    public static float Speed
+    {
+        get { return speed * Time.deltaTime; }
+    }
+    #endregion
+    #region Unity lifecycle
     private void Update()
     {
-        //The bag when the handAxis's x is 2.88; 
-        transform.position += transform.right * speed * Time.deltaTime;
+        transform.position += transform.right * Speed;
     }
+    #endregion
 }
