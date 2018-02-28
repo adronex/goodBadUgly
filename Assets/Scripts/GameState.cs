@@ -1,6 +1,7 @@
 ﻿public enum GameState
 {
-    Preparing,
+    Waiting,
+    Countdown,
     Battle,
     End
 }

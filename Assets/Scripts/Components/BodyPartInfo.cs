@@ -3,12 +3,10 @@
 public class BodyPartInfo : MonoBehaviour
 {
     #region Fields
-    [SerializeField] private int minDamage;
-    [SerializeField] private int maxDamage;
+    [SerializeField] private int damage;
     #endregion
 
     #region Properties
-    public int MinDamage { get { return minDamage; } }
-    public int MaxDamage { get { return maxDamage; } }
+    public int Damage { get { return damage; } }
     #endregion
 }
