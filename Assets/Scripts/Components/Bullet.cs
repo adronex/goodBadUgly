@@ -3,18 +3,12 @@
 public class Bullet : MonoBehaviour
 {
     #region Fields
-    private const float speed = 15f;
-    #endregion
-    #region Properties
-    public static float Speed
-    {
-        get { return speed * Time.deltaTime; }
-    }
+    public const float BULLET_SPEED = 1F;
     #endregion
     #region Unity lifecycle
     private void Update()
     {
-        transform.position += transform.right * Speed;
+        transform.position += transform.right * BULLET_SPEED;
     }
     #endregion
 }
