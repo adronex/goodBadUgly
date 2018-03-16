@@ -6,48 +6,27 @@ using UnityEngine;
 public class GameCore
 {
     #region Fields
+    public static event GameDoStartedEventHandler GameDoStartedEvent; //todo: change events/delegates names
+    public static event GameDoWaitedEventHandler GameDoWaitedEvent;
+    public static event GameDoCountdownEventHandler GameDoCountdownEvent;
+
+    public static event HealthChangedEventHandler HealthChangedEvent;
+    public static event AmmoChangedEventHandler AmmoChangedEvent;
+
     private readonly BattleField battleField;
     private GameState currentGameState;
     #endregion
-    public delegate void GameStartedEventHandler();
-    public static event GameStartedEventHandler GameStartedEvent;
     #region Properties
     public GameState CurrentGameState
     {
-        get
-        {
-            return currentGameState;
-        }
+        get { return currentGameState; }
     }
 
-    public Transform OwnGunpoint
+    public Transform GetGunpoint(HeroType type) //todo: add the enemy gunpoint
     {
-        get
-        {
-            return battleField.OwnHero.Hand.GunPoint;
-        }
-    }
-
-    public Transform EnemyGunpoint
-    {
-        get
-        {
-            return battleField.EnemyHero.Hand.GunPoint;
-        }
-    }
-
-    public bool CouldShoot
-    {
-        get
-        {
-            if (battleField.OwnHero.CurrentAmmo <= 0)
-            {
-                return false;
-            }
-
-            battleField.OwnHero.OnShoot();
-            return true;
-        }
+        var hero = battleField.GetHero(type);
+        var hand = hero.Hand;
+        return hand.GunPoint;
     }
     #endregion
     #region Public methods
@@ -64,41 +43,56 @@ public class GameCore
         battleField = new BattleField(ownHero, enemyHero);
     }
 
+    public bool CanShoot()
+    {
+        var hero = battleField.GetHero(HeroType.Own);
+        if (hero.CurrentAmmo <= 0)
+        {
+            return false;
+        }
+
+        hero.CurrentAmmo--;
+        if (AmmoChangedEvent != null)
+        {
+            AmmoChangedEvent(HeroType.Own, hero.CurrentAmmo);
+        }
+        return true;
+    }
+
     public void StartWaiting() //the logic of punishment
     {
         currentGameState = GameState.Waiting;
+        if (GameDoWaitedEvent != null)
+        {
+            GameDoWaitedEvent();
+        }
     }
 
     public void StartCountdown()
     {
         currentGameState = GameState.Countdown;
+        if (GameDoCountdownEvent != null)
+        {
+            GameDoCountdownEvent();
+        }
     }
 
     public void StartGame()
     {
         currentGameState = GameState.Battle;
-        if (GameStartedEvent != null)
+        if (GameDoStartedEvent != null)
         {
-            GameStartedEvent();
+            GameDoStartedEvent();
         }
     }
 
     public bool CheckCollision(HeroType type, Vector2 bulletPos)
     {
-        Hero hero;
-        switch (type)
-        {
-            case HeroType.Own:
-                hero = battleField.OwnHero;
-                break;
-            case HeroType.Enemy:
-                hero = battleField.EnemyHero;
-                break;
-            default:
-                throw new ArgumentException();
-        }
+        var hero = battleField.GetHero(type);
+        var gunpointPos = hero.Hand.GunPoint.position;
+        var bodyParts = hero.BodyParts;
 
-        int damageCount = CollisionController.CheckCollision(bulletPos, hero);
+        int damageCount = CollisionController.CheckCollision(bulletPos, gunpointPos, bodyParts);
         if (damageCount > 0)
         {
             Damage(type, damageCount);
@@ -112,19 +106,7 @@ public class GameCore
 
     public void RotateHandTo(HeroType type, Vector2 aim)
     {
-        Hero hero;
-        switch (type)
-        {
-            case HeroType.Own:
-                hero = battleField.OwnHero;
-                aim = hero.Hand.Position - aim;
-                break;
-            case HeroType.Enemy:
-                hero = battleField.EnemyHero;
-                break;
-            default:
-                throw new ArgumentException();
-        }
+        Hero hero = battleField.OwnHero;
 
         hero.Hand.LookTo(aim);
     }
@@ -132,7 +114,10 @@ public class GameCore
     #region Private methods
     private void CheckEndGame()
     {
-        var oneHeroIsDead = battleField.OwnHero.CurrentHealth <= 0 || battleField.EnemyHero.CurrentHealth <= 0;
+        var ownHealth = battleField.OwnHero.CurrentHealth;
+        var enemyHealth = battleField.EnemyHero.CurrentHealth;
+
+        var oneHeroIsDead = ownHealth <= 0 || enemyHealth <= 0;
         if (currentGameState == GameState.Battle && oneHeroIsDead)
         {
             currentGameState = GameState.End;
@@ -142,15 +127,20 @@ public class GameCore
 
     private void Damage(HeroType type, int damageCount)
     {
-        switch (type)
+        var hero = battleField.GetHero(type);
+        hero.CurrentHealth -= damageCount;
+
+        if (HealthChangedEvent != null)
         {
-            case HeroType.Own:
-                battleField.OwnHero.CurrentHealth -= damageCount;
-                break;
-            case HeroType.Enemy:
-                battleField.EnemyHero.CurrentHealth -= damageCount;
-                break;
+            HealthChangedEvent(type, hero.CurrentHealth);
         }
     }
+    #endregion
+    #region Event handlers
+    public delegate void HealthChangedEventHandler(HeroType type, int health);
+    public delegate void AmmoChangedEventHandler(HeroType type, int ammo);
+    public delegate void GameDoStartedEventHandler();
+    public delegate void GameDoWaitedEventHandler();
+    public delegate void GameDoCountdownEventHandler();
     #endregion
 }

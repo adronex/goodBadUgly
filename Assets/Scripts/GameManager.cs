@@ -1,50 +1,44 @@
 ﻿using Controller;
 using Model;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     #region Fields
+    private const string BULLET_PREFAB_PATH = "Prefabs/Bullet";
+
     [SerializeField] private Transform ownHandAxis;
     [SerializeField] private Transform enemyHandAxis;
     [SerializeField] private RectTransform AimArena;
     [SerializeField] private RectTransform HeroArena;
     [SerializeField] private RectTransform ShootArena;
 
-    const float coundownTimer = 3f;
-
     private GameCore gameCore;
-
-    private Area aimArena;
-    private Area heroArena;
-    private Area shootArena;
+    private Countdown countdown;
+    private Mouse mouse;
 
     private GameObject bulletPrefab;
+
     private List<Transform> ownBullets = new List<Transform>();
     private List<Transform> enemyBullets = new List<Transform>();
 
-    private bool isLookToMouse;
-    private IEnumerator countdown;
     #endregion
     #region Unity lifecycle
     void Awake()
     {
         gameCore = new GameCore(ownHandAxis, enemyHandAxis);
+        countdown = new Countdown(gameCore, AimArena, HeroArena, ShootArena);
+        mouse = new Mouse();
 
-        aimArena = new Area(AreaType.AimArea, AimArena);
-        heroArena = new Area(AreaType.HeroArea, HeroArena);
-        shootArena = new Area(AreaType.ShootArea, ShootArena);
-
-        bulletPrefab = Resources.Load<GameObject>("Prefabs/Bullet");
+        bulletPrefab = Resources.Load<GameObject>(BULLET_PREFAB_PATH);
     }
 
 
     private void OnEnable()
     {
-        Area.AimArenaEnterEvent += StartLook;
-        Area.AimArenaExitEvent += FinishLook;
+        Area.AimArenaEnterEvent += mouse.StartLook;
+        Area.AimArenaExitEvent += mouse.StopLook;
         Area.HeroArenaEnterEvent += StartCountdown;
         Area.HeroArenaExitEvent += StopCountdown;
     }
@@ -52,33 +46,17 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        switch (gameCore.CurrentGameState)
-        {
-            case GameState.Waiting:
-                heroArena.Invoke(Input.mousePosition);
-                return;
-            case GameState.Countdown:
-                gameCore.StartCountdown();
-                heroArena.Invoke(Input.mousePosition);
-                return;
-            case GameState.Battle:
-                aimArena.Invoke(Input.mousePosition);
-                shootArena.Invoke(Input.mousePosition);
-                break;
-            case GameState.End:
-                print("you win!");
-                break;
-            default: throw new UnityException();
-        }
+        countdown.Produce();
 
-        if (Input.GetKeyDown(KeyCode.W) && gameCore.CouldShoot)
+        if (Input.GetKeyDown(KeyCode.W) && gameCore.CanShoot())
         {
             CreateBullet(HeroType.Own);
         }
 
-        if (isLookToMouse)
+        if (mouse.IsLooking)
         {
-            var gameMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            var mousePos = Input.mousePosition;
+            var gameMousePos = Camera.main.ScreenToWorldPoint(mousePos);
             gameCore.RotateHandTo(HeroType.Own, gameMousePos);
         }
 
@@ -91,137 +69,70 @@ public class GameManager : MonoBehaviour
         {
             DestroyCollidedBullets(enemyBullets, HeroType.Own);
         }
-
-
-        //if (gameCore.CurrentGameState == GameState.Waiting)
-        //{
-        //    heroArena.Invoke(Input.mousePosition);
-        //    return;
-        //}
-
-        //if (gameCore.CurrentGameState == GameState.Countdown)
-        //{
-        //    gameCore.StartCountdown();
-
-        //    heroArena.Invoke(Input.mousePosition);
-        //    return;
-        //}
-
-        //if (gameCore.CurrentGameState == GameState.Battle)
-        //{
-        //    aimArena.Invoke(Input.mousePosition);
-        //    shootArena.Invoke(Input.mousePosition);
-        //}
-
-        //if (Input.GetKeyDown(KeyCode.W) && gameCore.CouldShoot)
-        //{
-        //    CreateBullet(HeroType.Own);
-        //}
-
-        //if (isLookToMouse)
-        //{
-        //    var gameMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //    gameCore.RotateHandTo(HeroType.Own, gameMousePos);
-        //}
-
-        //if (ownBullets.Count > 0)
-        //{
-        //    DestroyCollidedBullets(ownBullets, HeroType.Enemy);
-        //}
-
-        //if (enemyBullets.Count > 0)
-        //{
-        //    DestroyCollidedBullets(enemyBullets, HeroType.Own);
-        //}
     }
 
 
     private void OnDisable()
     {
-        Area.AimArenaEnterEvent -= StartLook;
-        Area.AimArenaExitEvent -= FinishLook;
+        Area.AimArenaEnterEvent -= mouse.StartLook;
+        Area.AimArenaExitEvent -= mouse.StopLook;
+        Area.HeroArenaEnterEvent -= StartCountdown;
+        Area.HeroArenaExitEvent -= StopCountdown;
     }
     #endregion
-
     #region Public methods
     public void CreateBullet(HeroType type)
     {
-        Transform gunpoint;
-        switch (type)
-        {
-            case HeroType.Own:
-                gunpoint = gameCore.OwnGunpoint;
-                break;
-            case HeroType.Enemy:
-                gunpoint = gameCore.EnemyGunpoint;
-                break;
-            default:
-                throw new UnityException();
-        }
+        Transform gunpoint = gameCore.GetGunpoint(type);
 
         var bullet = Instantiate(bulletPrefab, gunpoint.position, gunpoint.rotation);
         ownBullets.Add(bullet.transform);
     }
     #endregion
-
     #region Private methods
-    private void StopCountdown()
+    private void DestroyCollidedBullets(List<Transform> bullets, HeroType type)
     {
-        if (gameCore.CurrentGameState == GameState.Countdown)
+        for (int index = 0; index < bullets.Count; index++)
         {
-            StopCoroutine(countdown);
-            gameCore.StartWaiting();
+            var bullet = bullets[index];
+
+            var isCollided = gameCore.CheckCollision(type, bullet.position);
+            if (isCollided)
+            {
+                Destroy(bullet.gameObject);
+                bullets.Remove(bullet);
+                //////////////////////todo: DELETE THIS
+                var jj = Random.Range(0, 1);
+                string paramName = asdas == false ? "fall_forward" : "back_step";
+                asdas = true;
+                print(paramName);
+                GameObject.Find("EnemyHero").GetComponent<Animator>().SetTrigger(paramName);
+            }
         }
     }
 
+    //delete
+    private bool asdas;
 
     private void StartCountdown()
     {
         if (gameCore.CurrentGameState == GameState.Waiting)
         {
             gameCore.StartCountdown();
-            countdown = StartCountdownRoutine();
-            StartCoroutine(countdown);
+
+            var newCountdown = countdown.CreateNew();
+            StartCoroutine(newCountdown);
         }
     }
 
 
-    private IEnumerator StartCountdownRoutine()
+    private void StopCountdown()
     {
-        yield return new WaitForSeconds(3f);
-
-        gameCore.StartGame();
-    }
-
-
-    private void StartLook()
-    {
-        if (!isLookToMouse)
+        if (gameCore.CurrentGameState == GameState.Countdown)
         {
-            isLookToMouse = true;
-        }
-    }
+            StopCoroutine(countdown.Current);
 
-
-    private void FinishLook()
-    {
-        if (isLookToMouse)
-        {
-            isLookToMouse = false;
-        }
-    }
-
-
-    private void DestroyCollidedBullets(List<Transform> bullets, HeroType type)
-    {
-        for (int i = 0; i < bullets.Count; i++)
-        {
-            var bullet = bullets[i];
-            if (gameCore.CheckCollision(type, bullet.position))
-            {
-                Destroy(bullet.gameObject);
-                bullets.Remove(bullet);
-            }
+            gameCore.StartWaiting();
         }
     }
     #endregion

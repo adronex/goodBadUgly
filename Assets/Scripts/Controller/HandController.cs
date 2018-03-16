@@ -7,18 +7,22 @@ namespace Controller
         private Transform transform;
         private Transform gunpoint;
 
-        public Vector2 Position { get { return transform.position; } }
         public Transform GunPoint { get { return gunpoint; } }
 
         public HandController(Transform handAxis)
         {
             transform = handAxis;
-            gunpoint = transform.Find("Hand").Find("Gunpoint");
+            gunpoint = transform.Find("ArmLower").Find("Hand").Find("Gun").Find("Gunpoint"); 
         }
 
-        public void LookTo(Vector2 aim)
+        public void LookTo(Vector2 aim) //INCORRECT METHOD! todo: 
         {
-            transform.rotation = Quaternion.LookRotation(aim);
+            var target = (Vector3)aim - gunpoint.position;
+            var temp = Quaternion.LookRotation(target);
+            transform.rotation = temp;
+            var local = transform.localRotation.eulerAngles;
+            var newLocal = new Vector3(0, 0, local.x);
+            transform.localRotation = Quaternion.Euler(newLocal);
         }
     }
 }

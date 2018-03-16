@@ -12,35 +12,37 @@ namespace Model
         #endregion
 
         #region Properties
-        public Transform Transform
+        internal Transform Transform
         {
             get { return transform; }
         }
 
-        public float Width
+        internal float Width
         {
             get { return width; }
         }
 
-        public float Height
+        internal float Height
         {
             get { return height; }
         }
 
-        public int Damage
+        internal int Damage
         {
             get { return damage; }
         }
         #endregion
 
         #region Public methods
-        public static BodyPart[] FindEnemyParts()
+        internal static BodyPart[] FindEnemyParts()
         {
-            var transform = GameObject.Find("EnemyHero").transform;
-            var bodyparts = new BodyPart[transform.childCount - 1];
-            for (int i = 0; i < transform.childCount - 1; i++) //first is skipped cuz the first child is the HandAxis, not the BodyPart
+            var enemyHero = GameObject.Find("EnemyHero");
+            var HeroBodyparts = enemyHero.GetComponent<HeroBodyParts>();
+
+            var bodyparts = new BodyPart[HeroBodyparts.Lenght];
+            for (int i = 0; i < HeroBodyparts.Lenght; i++) //first is skipped cuz the first child is the HandAxis, not the BodyPart
             {
-                bodyparts[i] = GetBodyPart(transform.GetChild(i + 1).transform);
+                bodyparts[i] = GetBodyPart(HeroBodyparts.Get(i));
             }
 
             return bodyparts;
