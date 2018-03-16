@@ -15,19 +15,13 @@ namespace Controller
         private Vector2 botLeftPoint;
         private Vector2 topRightPoint;
         #endregion
-
-        #region Temp
-        private Vector2 pos;
-        private Rect rect;
-        #endregion
-
         #region Public Methods
         public Area(AreaType type, RectTransform transformZone)
         {
             this.type = type;
 
-            pos = transformZone.position;
-            rect = transformZone.rect;
+            var pos = transformZone.position;
+            var rect = transformZone.rect;
 
             botLeftPoint = new Vector2(pos.x + rect.xMin, pos.y + rect.yMin);
             topRightPoint = new Vector2(pos.x + rect.xMax, pos.y + rect.yMax);
@@ -36,7 +30,8 @@ namespace Controller
 
         public void Invoke(Vector2 mousePos)
         {
-            if (Check(this, mousePos))
+            var isCollided = Check(this, mousePos);
+            if (isCollided)
             {
                 switch (type)
                 {

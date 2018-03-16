@@ -5,9 +5,6 @@ namespace Model
     public class Hero
     {
         #region Fields
-        public static event HealthChangedEventHandler HealthChangedEvent;
-        public static event AmmoChangedEventHandler AmmoChangedEvent;
-
         private HeroType type;
         private int maxHealth;
         private int currentHealth;
@@ -18,28 +15,16 @@ namespace Model
         private BodyPart[] bodyParts;
         #endregion
         #region Properties
-        public int MaxHealth
-        {
-            get { return maxHealth; }
-        }
-
         public int CurrentHealth
         {
             get { return currentHealth; }
-            set
-            {
-                currentHealth = value;
-                if (HealthChangedEvent != null)
-                {
-                    HealthChangedEvent(type, currentHealth);
-                }
-            }
+            set { currentHealth = value; }
         }
 
         public int CurrentAmmo
         {
             get { return currentAmmo; }
-
+            set { currentAmmo = value; }
         }
 
         public BodyPart[] BodyParts
@@ -47,7 +32,10 @@ namespace Model
             get { return bodyParts; }
         }
 
-        public HandController Hand { get { return hand; } }
+        public HandController Hand
+        {
+            get { return hand; }
+        }
 
         #endregion
         #region Public methods
@@ -66,20 +54,6 @@ namespace Model
                 bodyParts = BodyPart.FindEnemyParts();
             }
         }
-
-        public void OnShoot()
-        {
-            currentAmmo--;
-            if (AmmoChangedEvent != null)
-            {
-                AmmoChangedEvent(type, CurrentAmmo);
-            }
-        }
-        #endregion
-
-        #region Event handlers
-        public delegate void HealthChangedEventHandler(HeroType type, int currentHealth);
-        public delegate void AmmoChangedEventHandler(HeroType type, int currentAmmo);
         #endregion
     }
 }

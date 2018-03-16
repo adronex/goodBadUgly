@@ -6,13 +6,12 @@ namespace Controller
     public static class CollisionController
     {
         #region Public methods
-        public static int CheckCollision(Vector2 bulletPos, Hero hero)
+        public static int CheckCollision(Vector2 bulletPos, Vector3 gunpointPos, BodyPart[] bodyParts)
         {
-            var gunpointPos = hero.Hand.GunPoint.position;
-            foreach (var bodyPart in hero.BodyParts)
+            foreach (var bodyPart in bodyParts)
             {
                 var points = GetRealPoints(bodyPart);
-
+                
                 var min = float.MaxValue;
                 var max = float.MinValue;
                 var minId = 0;
@@ -52,10 +51,10 @@ namespace Controller
 
             return new Vector2[4]
                 {
-                new Vector2(pos.x - bodyPart.Width, pos.y - bodyPart.Height),
-                new Vector2(pos.x + bodyPart.Width, pos.y - bodyPart.Height),
-                new Vector2(pos.x + bodyPart.Width, pos.y + bodyPart.Height),
-                new Vector2(pos.x - bodyPart.Width, pos.y + bodyPart.Height),
+                    new Vector2(pos.x - bodyPart.Width, pos.y - bodyPart.Height),
+                    new Vector2(pos.x + bodyPart.Width, pos.y - bodyPart.Height),
+                    new Vector2(pos.x + bodyPart.Width, pos.y + bodyPart.Height),
+                    new Vector2(pos.x - bodyPart.Width, pos.y + bodyPart.Height),
                 };
         }
 
