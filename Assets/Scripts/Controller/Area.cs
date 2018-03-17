@@ -11,7 +11,7 @@ namespace Controller
         public static event HeroArenaExitEventHandler HeroArenaExitEvent;
         public static event ShootArenaEnterEventHandler ShootArenaEnterEvent;
 
-        private AreaType type;
+        private readonly AreaType type;
         private Vector2 botLeftPoint;
         private Vector2 topRightPoint;
         #endregion
@@ -78,13 +78,8 @@ namespace Controller
         #region Private methods
         private static bool Check(Area area, Vector2 mousePos)
         {
-            if (mousePos.x >= area.botLeftPoint.x && mousePos.x <= area.topRightPoint.x
-                && mousePos.y >= area.botLeftPoint.y && mousePos.y <= area.topRightPoint.y)
-            {
-                return true;
-            }
-
-            return false;
+            return mousePos.x >= area.botLeftPoint.x && mousePos.x <= area.topRightPoint.x
+                   && mousePos.y >= area.botLeftPoint.y && mousePos.y <= area.topRightPoint.y;
         }
         #endregion
 

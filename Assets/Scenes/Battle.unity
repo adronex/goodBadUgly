@@ -421,7 +421,7 @@ GameObject:
   - component: {fileID: 207770375}
   - component: {fileID: 207770374}
   m_Layer: 5
-  m_Name: Enemy_Health
+  m_Name: Enemy_Hp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1500,7 +1500,7 @@ GameObject:
   - component: {fileID: 870749265}
   - component: {fileID: 870749264}
   m_Layer: 5
-  m_Name: Own_Health
+  m_Name: Own_Hp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2180,6 +2180,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1435045823}
   - component: {fileID: 1435045822}
+  - component: {fileID: 1435045824}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2198,8 +2199,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb269ece028ae6b43b08cf32f96d66c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ownHandAxis: {fileID: 8741693}
-  enemyHandAxis: {fileID: 361816089}
   AimArena: {fileID: 2141482823}
   HeroArena: {fileID: 1784314126}
   ShootArena: {fileID: 386683024}
@@ -2216,6 +2215,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1435045824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1435045821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59224e18d63735942aef038e0eac31b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownAmmoText: {fileID: 1673277250}
+  ownHpImage: {fileID: 870749264}
+  ownHandAxis: {fileID: 8741693}
+  enemyAmmoText: {fileID: 890387535}
+  enemyHpImage: {fileID: 207770374}
+  enemyHandAxis: {fileID: 361816089}
 --- !u!1 &1458523346
 GameObject:
   m_ObjectHideFlags: 0
@@ -2479,10 +2495,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e9e95570e0014f43b096e928dca726e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ownAmmo: {fileID: 1673277250}
-  enemyAmmo: {fileID: 890387535}
-  ownHealth: {fileID: 870749264}
-  enemyHealth: {fileID: 207770374}
   StartNotification: {fileID: 1730268714}
   AimArenaOutline: {fileID: 2141482824}
   HeroArenaOutline: {fileID: 1784314127}
@@ -2718,7 +2730,7 @@ GameObject:
   - component: {fileID: 1649853780}
   - component: {fileID: 1649853779}
   m_Layer: 5
-  m_Name: Own_Health_Tint
+  m_Name: Own_Hp_Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3233,7 +3245,7 @@ GameObject:
   - component: {fileID: 1912083053}
   - component: {fileID: 1912083052}
   m_Layer: 5
-  m_Name: Enemy_Health_Tint
+  m_Name: Enemy_Hp_Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

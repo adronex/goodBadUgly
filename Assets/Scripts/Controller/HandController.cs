@@ -4,8 +4,8 @@ namespace Controller
 {
     public class HandController
     {
-        private Transform transform;
-        private Transform gunpoint;
+        private readonly Transform transform;
+        private readonly Transform gunpoint;
 
         public Transform GunPoint { get { return gunpoint; } }
 

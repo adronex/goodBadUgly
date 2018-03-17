@@ -1,22 +1,21 @@
 ﻿public class Mouse
 {
-    private bool isLookingToMouse;
-    public bool IsLooking { get { return isLookingToMouse; } }
+    public bool IsLooking { get; private set; }
 
     public void StartLook()
     {
-        if (!isLookingToMouse)
+        if (!IsLooking)
         {
-            isLookingToMouse = true;
+            IsLooking = true;
         }
     }
 
 
     public void StopLook()
     {
-        if (isLookingToMouse)
+        if (IsLooking)
         {
-            isLookingToMouse = false;
+            IsLooking = false;
         }
     }
 }

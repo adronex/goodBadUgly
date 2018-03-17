@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Model;
 
 namespace Controller
 {
@@ -10,7 +9,7 @@ namespace Controller
         {
             foreach (var bodyPart in bodyParts)
             {
-                var points = GetRealPoints(bodyPart);
+                Vector2[] points = GetRealPoints(bodyPart);
                 
                 var min = float.MaxValue;
                 var max = float.MinValue;
@@ -32,7 +31,7 @@ namespace Controller
                     }
                 }
 
-                var possiblePoints = GetPossiblePoints(points, minId, maxId, gunpointPos);
+                Vector2[] possiblePoints = GetPossiblePoints(points, minId, maxId, gunpointPos);
 
                 if (IsBelongToHeroPart(bulletPos, possiblePoints))
                 {
@@ -49,7 +48,7 @@ namespace Controller
         {
             var pos = bodyPart.Transform.position;
 
-            return new Vector2[4]
+            return new[]
                 {
                     new Vector2(pos.x - bodyPart.Width, pos.y - bodyPart.Height),
                     new Vector2(pos.x + bodyPart.Width, pos.y - bodyPart.Height),
@@ -61,8 +60,8 @@ namespace Controller
 
         private static Vector2[] GetPossiblePoints(Vector2[] realPoints, int minId, int maxId, Vector2 gunpoint)
         {
-            Vector2[] points = new Vector2[6];
-            bool isRevert = true;
+            var points = new Vector2[6];
+            var isRevert = true;
             for (int i = 0, j = 0; j < 6; i++, j++)
             {
                 var direction = realPoints[i] - gunpoint;
@@ -72,7 +71,7 @@ namespace Controller
                     points[j] = realPoints[i];
                     continue;
                 }
-                else if (i == maxId)
+                if (i == maxId)
                 {
                     points[j] = realPoints[i] + offset;
                     continue;
@@ -99,10 +98,10 @@ namespace Controller
         //https://ru.wikibooks.org/wiki/Реализации_алгоритмов/Задача_о_принадлежности_точки_многоугольнику
         private static bool IsBelongToHeroPart(Vector2 point, Vector2[] p) //p is the points
         {
-            int previus = p.Length - 1;
-            bool isBelong = false;
+            var previus = p.Length - 1;
+            var isBelong = false;
 
-            for (int current = 0; current < p.Length; current++)
+            for (var current = 0; current < p.Length; current++)
             {
                 if (p[current].y < point.y && p[previus].y >= point.y || p[previus].y < point.y && p[current].y >= point.y)
                 {
