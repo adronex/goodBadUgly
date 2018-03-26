@@ -13,9 +13,7 @@ fun main(args: Array<String>) {
     QotmClient().run()
 }
 
-class QotmClient {
-
-    val PORT = Integer.parseInt(System.getProperty("port", "7686"))
+class QotmClient(val port: Int = 7686) {
 
     fun run() {
 
@@ -31,8 +29,8 @@ class QotmClient {
 
             // Broadcast the QOTM request to port 8080.
             ch.writeAndFlush(DatagramPacket(
-                    Unpooled.copiedBuffer("QOTM?", CharsetUtil.UTF_8),
-                    SocketUtils.socketAddress("255.255.255.255", PORT))).sync()
+                    Unpooled.copiedBuffer("QOmmTM?", CharsetUtil.UTF_8),
+                    SocketUtils.socketAddress("127.0.0.1", port))).sync()
 
             // QuoteOfTheMomentClientHandler will close the DatagramChannel when a
             // response is received.  If the channel is not closed within 5 seconds,

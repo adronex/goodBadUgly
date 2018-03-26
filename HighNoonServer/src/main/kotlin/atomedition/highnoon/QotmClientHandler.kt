@@ -13,6 +13,8 @@ class QuoteOfTheMomentClientHandler : SimpleChannelInboundHandler<DatagramPacket
         if (response.startsWith("QOTM: ")) {
             println("Quote of the Moment: " + response.substring(6))
             ctx.close()
+        } else {
+            System.err.println("Now: ${msg.content().getInt(0)}, firstHero: ${msg.content().getByte(4)}")
         }
     }
 

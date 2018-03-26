@@ -1,6 +1,7 @@
 package atomedition.highnoon.whitetrash
 
 import io.netty.channel.ChannelHandlerContext
+import java.net.InetSocketAddress
 
 data class Hero(
         val id: Byte,
@@ -18,7 +19,8 @@ data class EventLog(
         val timeStamp: Int
 )
 
-class GameRoom(val receiver1: ChannelHandlerContext) {
+class GameRoom(val receiver1: InetSocketAddress,
+               val context1: ChannelHandlerContext) {
     val firstTeam = mutableListOf<Hero>()
     val secondTeam = mutableListOf<Hero>()
     val lastActionsLog = Array<EventType?>(2,  { null })

@@ -9,6 +9,6 @@ class GameEventHandler: ChannelInboundHandlerAdapter() {
 //    }
 
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
-        GameRoomsPool.initGameRoom(GameRoom(ctx))
+//        GameRoomsPool.initGameRoom(GameRoom(ctx))
     }
 }
