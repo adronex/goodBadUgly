@@ -1,4 +1,6 @@
-package atomedition.highnoon
+package atomedition.highnoon.whitetrash
+
+import io.netty.channel.ChannelHandlerContext
 
 data class Hero(
         val id: Byte,
@@ -16,7 +18,7 @@ data class EventLog(
         val timeStamp: Int
 )
 
-class GameRoom {
+class GameRoom(val receiver1: ChannelHandlerContext) {
     val firstTeam = mutableListOf<Hero>()
     val secondTeam = mutableListOf<Hero>()
     val lastActionsLog = Array<EventType?>(2,  { null })

@@ -1,4 +1,4 @@
-package atomedition.highnoon
+package atomedition.highnoon.whitetrash
 
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.MessageToMessageEncoder
@@ -31,7 +31,7 @@ class GameRoomEncoder: MessageToMessageEncoder<GameRoom>() {
             bytes[i] = team1[i]
         }
         for (i in 9 until 12) {
-            bytes[i] = team1[i]
+            bytes[i] = team2[i]
         }
         out.add(bytes.toString())
     }
