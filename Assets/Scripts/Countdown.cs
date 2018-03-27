@@ -4,17 +4,15 @@ using UnityEngine;
 
 class Countdown
 {
-    private const float COUNTDOWN_TIMER = 3f;//must be changed!
+    private const float COUNTDOWN_TIMER = 0f;//must be changed!
 
-    private GameCore gameCore;
+    private readonly GameCore gameCore;
 
-    private Area aimArena;
-    private Area heroArena;
-    private Area shootArena;
+    private readonly Area aimArena;
+    private readonly Area heroArena;
+    private readonly Area shootArena;
 
-    private IEnumerator countdown;
-
-    public IEnumerator Current { get { return countdown; } }
+    public IEnumerator Current { get; private set; }
 
     public Countdown(GameCore gameCore, RectTransform aimRect, RectTransform heroRect, RectTransform shootRect)
     {
@@ -25,32 +23,32 @@ class Countdown
         shootArena = new Area(AreaType.ShootArea, shootRect);
     }
 
-    public void Produce()
+    public GameState Produce()
     {
-        switch (gameCore.CurrentGameState)
+        var currentState = gameCore.CurrentGameState;
+        switch (currentState)
         {
             case GameState.Waiting:
                 heroArena.Invoke(Input.mousePosition);
-                return;
+                break;
             case GameState.Countdown:
                 gameCore.StartCountdown();
                 heroArena.Invoke(Input.mousePosition);
-                return;
+                break;
             case GameState.Battle:
                 aimArena.Invoke(Input.mousePosition);
                 shootArena.Invoke(Input.mousePosition);
                 break;
             case GameState.End:
-                //////////////////////////////////////////////////////////////////////////////////////////////////
                 break;
-            default: throw new UnityException();
         }
+        return currentState;
     }
 
     public IEnumerator CreateNew()
     {
-        countdown = StartCountdownRoutine();
-        return countdown;
+        Current = StartCountdownRoutine();
+        return Current;
     }
 
     private IEnumerator StartCountdownRoutine()

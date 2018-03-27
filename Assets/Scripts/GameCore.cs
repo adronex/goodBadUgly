@@ -1,6 +1,4 @@
-﻿using System;
-using Controller;
-using Model;
+﻿using Controller;
 using UnityEngine;
 
 public class GameCore
@@ -9,59 +7,60 @@ public class GameCore
     public static event GameDoStartedEventHandler GameDoStartedEvent; //todo: change events/delegates names
     public static event GameDoWaitedEventHandler GameDoWaitedEvent;
     public static event GameDoCountdownEventHandler GameDoCountdownEvent;
+    public static event GameOverEventHandler GameOverEvent;
 
-    public static event HealthChangedEventHandler HealthChangedEvent;
-    public static event AmmoChangedEventHandler AmmoChangedEvent;
+    private readonly Hero ownHero;
+    private readonly Hero enemyHero;
 
-    private readonly BattleField battleField;
-    private GameState currentGameState;
     #endregion
     #region Properties
-    public GameState CurrentGameState
+    public GameState CurrentGameState { get; private set; }
+
+    public Hero OwnHero
     {
-        get { return currentGameState; }
+        get
+        {
+            return ownHero;
+        }
     }
 
-    public Transform GetGunpoint(HeroType type) //todo: add the enemy gunpoint
+    public Hero EnemyHero
     {
-        var hero = battleField.GetHero(type);
-        var hand = hero.Hand;
-        return hand.GunPoint;
+        get
+        {
+            return enemyHero;
+        }
     }
+
+    public Transform GetGunpoint(Hero hero) //todo: add the enemy gunpoint
+    {
+        return hero.Gunpoint;
+    }
+
     #endregion
     #region Public methods
-    public GameCore(Transform ownHandTransform, Transform enemyHandTransform)
+    public GameCore(HeroesManager heroesManager)
     {
-        currentGameState = GameState.Waiting;
+        CurrentGameState = GameState.Waiting;
 
-        var ownHand = new HandController(ownHandTransform);
-        var ownHero = new Hero(HeroType.Own, ownHand, 100, 6);
-
-        var enemyHand = new HandController(enemyHandTransform);
-        var enemyHero = new Hero(HeroType.Enemy, enemyHand, 100, 6);
-
-        battleField = new BattleField(ownHero, enemyHero);
+        ownHero = new OwnHero(heroesManager, 100, 6, GameObject.Find("OwnCowboy").GetComponent<Animator>());
+        enemyHero = new EnemyHero(heroesManager, 100, 6, GameObject.Find("EnemyCowboy").GetComponent<Animator>());
     }
 
     public bool CanShoot()
     {
-        var hero = battleField.GetHero(HeroType.Own);
-        if (hero.CurrentAmmo <= 0)
+        if (ownHero.CanShoot)
         {
             return false;
         }
 
-        hero.CurrentAmmo--;
-        if (AmmoChangedEvent != null)
-        {
-            AmmoChangedEvent(HeroType.Own, hero.CurrentAmmo);
-        }
+        ownHero.ReduceAmmo();
         return true;
     }
 
     public void StartWaiting() //the logic of punishment
     {
-        currentGameState = GameState.Waiting;
+        CurrentGameState = GameState.Waiting;
         if (GameDoWaitedEvent != null)
         {
             GameDoWaitedEvent();
@@ -70,7 +69,7 @@ public class GameCore
 
     public void StartCountdown()
     {
-        currentGameState = GameState.Countdown;
+        CurrentGameState = GameState.Countdown;
         if (GameDoCountdownEvent != null)
         {
             GameDoCountdownEvent();
@@ -79,68 +78,64 @@ public class GameCore
 
     public void StartGame()
     {
-        currentGameState = GameState.Battle;
+        CurrentGameState = GameState.Battle;
         if (GameDoStartedEvent != null)
         {
             GameDoStartedEvent();
         }
     }
 
-    public bool CheckCollision(HeroType type, Vector2 bulletPos)
+    public bool CheckCollision(Hero hero, Transform bullet)
     {
-        var hero = battleField.GetHero(type);
-        var gunpointPos = hero.Hand.GunPoint.position;
+        var gunpoint = hero.Gunpoint;
+        var gunpointPos = gunpoint.position;
+
         var bodyParts = hero.BodyParts;
 
-        int damageCount = CollisionController.CheckCollision(bulletPos, gunpointPos, bodyParts);
-        if (damageCount > 0)
+        int partId;
+        int damageCount = CollisionController.CheckCollision(bullet.position, gunpointPos, bodyParts, out partId);
+        if (damageCount <= 0)
         {
-            Damage(type, damageCount);
-            CheckEndGame();
-            return true;
+            return false;
         }
 
-        return false;
+        hero.PlayAnimation(partId);
+        Damage(hero, damageCount);
+        CheckEndGame(hero);
+        return true;
     }
 
 
-    public void RotateHandTo(HeroType type, Vector2 aim)
+    public void RotateHand(Hero hero, Vector2 aim)
     {
-        Hero hero = battleField.OwnHero;
-
-        hero.Hand.LookTo(aim);
+        hero.RotateHand(aim);
     }
     #endregion
     #region Private methods
-    private void CheckEndGame()
+    private void CheckEndGame(Hero hero)
     {
-        var ownHealth = battleField.OwnHero.CurrentHealth;
-        var enemyHealth = battleField.EnemyHero.CurrentHealth;
-
-        var oneHeroIsDead = ownHealth <= 0 || enemyHealth <= 0;
-        if (currentGameState == GameState.Battle && oneHeroIsDead)
+        if (CurrentGameState == GameState.Battle && hero.IsDead)
         {
-            currentGameState = GameState.End;
+            CurrentGameState = GameState.End;
+
+            if (GameOverEvent != null)
+            {
+                GameOverEvent();
+            }
         }
     }
 
 
-    private void Damage(HeroType type, int damageCount)
+    private void Damage(Hero hero, int damageCount)
     {
-        var hero = battleField.GetHero(type);
-        hero.CurrentHealth -= damageCount;
-
-        if (HealthChangedEvent != null)
-        {
-            HealthChangedEvent(type, hero.CurrentHealth);
-        }
+        hero.ReduceHp(damageCount);
     }
     #endregion
     #region Event handlers
-    public delegate void HealthChangedEventHandler(HeroType type, int health);
-    public delegate void AmmoChangedEventHandler(HeroType type, int ammo);
     public delegate void GameDoStartedEventHandler();
     public delegate void GameDoWaitedEventHandler();
     public delegate void GameDoCountdownEventHandler();
+    public delegate void GameOverEventHandler();
     #endregion
 }
+
