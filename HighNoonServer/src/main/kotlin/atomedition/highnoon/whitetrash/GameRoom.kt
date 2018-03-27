@@ -24,5 +24,5 @@ class GameRoom(val receiver1: InetSocketAddress,
     val firstTeam = mutableListOf<Hero>()
     val secondTeam = mutableListOf<Hero>()
     val lastActionsLog = Array<EventType?>(2,  { null })
-    val currentMoment: Int = 0
+    var currentMoment: Int = 0
 }

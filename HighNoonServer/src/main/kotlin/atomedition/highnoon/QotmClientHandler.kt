@@ -14,7 +14,14 @@ class QuoteOfTheMomentClientHandler : SimpleChannelInboundHandler<DatagramPacket
             println("Quote of the Moment: " + response.substring(6))
             ctx.close()
         } else {
-            System.err.println("Now: ${msg.content().getInt(0)}, firstHero: ${msg.content().getByte(4)}")
+            when (msg.content().getByte(0)) {
+                1.toByte() -> System.err.println("Now: ${msg.content().getInt(1)}, firstHero: ${msg.content().getByte(5)}")
+                2.toByte() -> {
+                    System.err.println("Game over")
+                    ctx.close()
+                }
+            }
+
         }
     }
 
