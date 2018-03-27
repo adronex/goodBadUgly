@@ -1,18 +1,50 @@
+package atomedition.highnoon.whitetrash
+
+import io.netty.bootstrap.Bootstrap
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.buffer.ByteBuf
 import io.netty.channel.*
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.SocketChannel
+import io.netty.channel.socket.nio.NioDatagramChannel
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.netty.handler.codec.MessageToByteEncoder
 import io.netty.handler.codec.ReplayingDecoder
 import java.nio.charset.Charset
+import org.slf4j.LoggerFactory
 
 fun main(args: Array<String>) {
-    NettyServer(8888).run()
+    NettyUdpServer().run()
 }
 
-class NettyServer(private val port: Int = 7788) {
+
+class NettyUdpServer(private val port: Int = 7786) {
+
+    fun run() {
+        val workerGroup = NioEventLoopGroup()
+        try {
+            val bootstrap = Bootstrap()
+                    .group(workerGroup)
+                    .channel(NioDatagramChannel::class.java)
+                    .handler(object : ChannelInitializer<NioDatagramChannel>() {
+                        override fun initChannel(ch: NioDatagramChannel) {
+                            ch.pipeline().addLast(
+                                    RequestDecoder(),
+                                    ResponseDataEncoder(),
+                                    ProcessingHandler()
+                            )
+                        }
+                    })
+
+            val f = bootstrap.bind(port).sync()
+            f.channel().closeFuture().sync()
+        } finally {
+            workerGroup.shutdownGracefully()
+        }
+    }
+}
+
+class NettyTcpServer(private val port: Int = 7788) {
     fun run() {
         val bossGroup = NioEventLoopGroup()
         val workerGroup = NioEventLoopGroup()
@@ -40,6 +72,7 @@ class NettyServer(private val port: Int = 7788) {
         }
     }
 }
+
 class RequestDecoder : ReplayingDecoder<RequestDto>() {
 
     private val charset = Charset.forName("UTF-8")
@@ -58,13 +91,22 @@ class RequestDecoder : ReplayingDecoder<RequestDto>() {
 
 class ProcessingHandler : ChannelInboundHandlerAdapter() {
 
+    companion object {
+
+        private val LOG = LoggerFactory.getLogger(NettyUdpServer::class.java)
+    }
+
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
-        val requestDto = msg as RequestDto
-        val responseDto = ResponseDto()
-        responseDto.intValue = requestDto.intValue * 2
-        val future = ctx.writeAndFlush(responseDto)
-        future.addListener(ChannelFutureListener.CLOSE)
-        System.out.println(requestDto)
+        try {
+            val requestDto = msg as RequestDto
+            val responseDto = ResponseDto()
+            responseDto.intValue = requestDto.intValue * 2
+            val future = ctx.writeAndFlush(responseDto)
+            future.addListener(ChannelFutureListener.CLOSE)
+            System.out.println(requestDto)
+        } catch (e: Exception) {
+            LOG.error(e.message, e)
+        }
     }
 }
 
