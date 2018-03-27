@@ -1,7 +1,9 @@
 ﻿using Controller;
+using UnityEngine;
+
 public class EnemyHero : Hero
 {
-    public EnemyHero(HeroesManager heroesManager, int startHp, int startBullets) : base(startHp, startBullets)
+    public EnemyHero(HeroesManager heroesManager, int startHp, int startBullets, Animator animator) : base(startHp, startBullets, animator)
     {
         var axis = heroesManager.EnemyHandAxis;
         hand = new HandController(axis);
@@ -10,6 +12,7 @@ public class EnemyHero : Hero
         hpImage = heroesManager.EnemyHpImage;
         handAxis = heroesManager.EnemyHandAxis;
 
-        bodyParts = BodyPart.FindEnemyParts();////////////////////////////////////////////////////////
+        //todo: 
+        bodyParts = BodyPart.FindEnemyParts();
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Controller;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,6 +22,7 @@ public class GameManager : MonoBehaviour
     private readonly List<Transform> ownBullets = new List<Transform>();
     private readonly List<Transform> enemyBullets = new List<Transform>();
 
+    private IEnumerator reload;
     #endregion
     #region Unity lifecycle
     void Awake()
@@ -45,10 +48,15 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        countdown.Produce();
-
-        if (Input.GetKeyDown(KeyCode.W) && gameCore.CanShoot())
+        if (countdown.Produce() == GameState.End)
         {
+            return;
+        }
+
+        if (reload == null && Input.GetKeyDown(KeyCode.W) && gameCore.CanShoot())
+        {
+            reload = ReloadRoutine();
+            StartCoroutine(reload);
             CreateBullet(gameCore.OwnHero);
         }
 
@@ -70,6 +78,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private IEnumerator ReloadRoutine()
+    {
+        yield return new WaitForSecondsRealtime(0.7f);
+        reload = null;
+    }
 
     private void OnDisable()
     {
@@ -95,23 +108,16 @@ public class GameManager : MonoBehaviour
         {
             var bullet = bullets[index];
 
-            var isCollided = gameCore.CheckCollision(hero, bullet.position);
+            var isCollided = gameCore.CheckCollision(hero, bullet);
             if (isCollided)
             {
                 Destroy(bullet.gameObject);
                 bullets.Remove(bullet);
-                //////////////////////todo: DELETE THIS
-                var jj = Random.Range(0, 1);
-                var paramName = asdas == false ? "fall_forward" : "back_step";
-                asdas = true;
-                print(paramName);
-                GameObject.Find("EnemyHero").GetComponent<Animator>().SetTrigger(paramName);
+
             }
         }
     }
 
-    //delete
-    private bool asdas;
 
     private void StartCountdown()
     {

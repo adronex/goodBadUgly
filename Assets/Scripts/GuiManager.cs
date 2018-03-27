@@ -1,6 +1,7 @@
 ﻿using UnityEngine.UI;
 using UnityEngine;
 using System.Collections;
+using System;
 
 public class GuiManager : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class GuiManager : MonoBehaviour
     [SerializeField] private Image AimArenaOutline;
     [SerializeField] private Image HeroArenaOutline;
     [SerializeField] private Image ShootArenaOutline;
+    [SerializeField] private GameObject GameOverPanel;
 
     private IEnumerator hidePrompts;
     private bool shouldShow;
@@ -24,14 +26,16 @@ public class GuiManager : MonoBehaviour
         GameCore.GameDoStartedEvent += ShowNotification;
         GameCore.GameDoCountdownEvent += HidePrompts;
         GameCore.GameDoWaitedEvent += ShowPrompts;
+        GameCore.GameOverEvent += ShowGameOverPanel;
     }
-    
 
+   
     private void OnDisable()
     {
         GameCore.GameDoStartedEvent -= ShowNotification;
         GameCore.GameDoCountdownEvent -= HidePrompts;
         GameCore.GameDoWaitedEvent -= ShowPrompts;
+        GameCore.GameOverEvent -= ShowGameOverPanel;
     }
     #endregion
     #region Private methods
@@ -109,6 +113,12 @@ public class GuiManager : MonoBehaviour
         var shootColor = ShootArenaOutline.color;
         shootColor.a = 0.4f;
         ShootArenaOutline.color = shootColor;
+    }
+
+
+    private void ShowGameOverPanel()
+    {
+        GameOverPanel.SetActive(true);
     }
     #endregion
 }

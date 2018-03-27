@@ -4,7 +4,7 @@ using UnityEngine;
 
 class Countdown
 {
-    private const float COUNTDOWN_TIMER = 3f;//must be changed!
+    private const float COUNTDOWN_TIMER = 0f;//must be changed!
 
     private readonly GameCore gameCore;
 
@@ -23,26 +23,26 @@ class Countdown
         shootArena = new Area(AreaType.ShootArea, shootRect);
     }
 
-    public void Produce()
+    public GameState Produce()
     {
-        switch (gameCore.CurrentGameState)
+        var currentState = gameCore.CurrentGameState;
+        switch (currentState)
         {
             case GameState.Waiting:
                 heroArena.Invoke(Input.mousePosition);
-                return;
+                break;
             case GameState.Countdown:
                 gameCore.StartCountdown();
                 heroArena.Invoke(Input.mousePosition);
-                return;
+                break;
             case GameState.Battle:
                 aimArena.Invoke(Input.mousePosition);
                 shootArena.Invoke(Input.mousePosition);
                 break;
             case GameState.End:
-                //////////////////////////////////////////////////////////////////////////////////////////////////
                 break;
-            default: throw new UnityException();
         }
+        return currentState;
     }
 
     public IEnumerator CreateNew()

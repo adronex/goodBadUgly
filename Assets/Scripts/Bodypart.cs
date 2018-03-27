@@ -13,18 +13,29 @@ public class BodyPart
     #endregion
 
     #region Public methods
-    internal static BodyPart[] FindEnemyParts()
+    internal static BodyPart[] FindEnemyParts()//todo
     {
-        var enemyHero = GameObject.Find("EnemyHero");
-        var HeroBodyparts = enemyHero.GetComponent<HeroBodyParts>();
+        var allAreas = GameObject.Find("EnemyCowboy").transform.Find("Areas");
 
-        var bodyparts = new BodyPart[HeroBodyparts.Lenght];
-        for (var i = 0; i < HeroBodyparts.Lenght; i++) //first is skipped cuz the first child is the HandAxis, not the BodyPart
+        Transform currentAreas = null;
+        for (int i = 0; i < allAreas.childCount; i++)
         {
-            bodyparts[i] = GetBodyPart(HeroBodyparts.Get(i));
+            var areas = allAreas.GetChild(i);
+            if (areas.gameObject.activeSelf)
+            {
+                currentAreas = areas;
+                break;
+            }
         }
 
-        return bodyparts;
+        var bodyParts = new BodyPart[currentAreas.childCount];
+        for (int i = 0; i < bodyParts.Length; i++)
+        {
+            var area = currentAreas.GetChild(i);
+            bodyParts[i] = GetBodyPart(area);
+        }
+         
+        return bodyParts;
     }
     #endregion
 

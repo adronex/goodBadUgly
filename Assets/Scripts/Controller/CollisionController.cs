@@ -5,12 +5,14 @@ namespace Controller
     public static class CollisionController
     {
         #region Public methods
-        public static int CheckCollision(Vector2 bulletPos, Vector3 gunpointPos, BodyPart[] bodyParts)
+        public static int CheckCollision(Vector2 bulletPos, Vector3 gunpointPos, BodyPart[] bodyParts, out int partId)
         {
-            foreach (var bodyPart in bodyParts)
+            for (int i = 0; i < bodyParts.Length; i++)
             {
+                var bodyPart = bodyParts[i];
+
                 Vector2[] points = GetRealPoints(bodyPart);
-                
+
                 var min = float.MaxValue;
                 var max = float.MinValue;
                 var minId = 0;
@@ -35,10 +37,12 @@ namespace Controller
 
                 if (IsBelongToHeroPart(bulletPos, possiblePoints))
                 {
+                    partId = i;
                     return bodyPart.Damage;
                 }
             }
 
+            partId = -1;
             return -1;
         }
         #endregion

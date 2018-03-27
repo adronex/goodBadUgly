@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public abstract class Hero
 {
+    #region Fields
     private const float ONE_PERCENT = 0.01f;
 
     protected int maxHp;
@@ -13,11 +14,13 @@ public abstract class Hero
 
     protected HandController hand;
     protected BodyPart[] bodyParts;
+    protected Animator animator;
 
     protected Text ammoText;
     protected Image hpImage;
     protected Transform handAxis;
-
+    #endregion
+    #region Properties
     public Transform Gunpoint
     {
         get { return hand.GunPoint; }
@@ -37,12 +40,14 @@ public abstract class Hero
     {
         get { return currentAmmo <= 0; }
     }
-
+    #endregion
+    #region Public Methods
     public void ReduceAmmo()
     {
         currentAmmo--;
         UpdateAmmo();
     }
+
 
     public void ReduceHp(int amount)
     {
@@ -50,27 +55,41 @@ public abstract class Hero
         UpdateHp();
     }
 
-    private void UpdateAmmo()
+
+    public void RotateHand(Vector2 aim)
     {
-        ammoText.text = currentAmmo + "/" + maxAmmo;
+        hand.LookTo(aim);
     }
 
-    private void UpdateHp()
-    {
-        hpImage.fillAmount = currentHp * ONE_PERCENT;
-    }
 
-    protected Hero(int startHp, int startAmmo)
+    public void PlayAnimation(int bodyPartId)
+    {
+        var angle = Random.Range(0, 90);
+        animator.SetInteger("BodyPart", bodyPartId);
+        animator.SetFloat("Angle", angle);
+        animator.SetTrigger("Do");
+    }
+    #endregion
+    #region Private Methods
+    protected Hero(int startHp, int startAmmo, Animator animator)
     {
         maxHp = startHp;
         currentHp = startHp;
         maxAmmo = startAmmo;
         currentAmmo = startAmmo;
 
+        this.animator = animator;
     }
 
-    public void RotateHand(Vector2 aim)
+    private void UpdateAmmo()
     {
-        hand.LookTo(aim);
+        ammoText.text = currentAmmo + "/" + maxAmmo;
     }
+
+
+    private void UpdateHp()
+    {
+        hpImage.fillAmount = currentHp * ONE_PERCENT;
+    }
+    #endregion
 }

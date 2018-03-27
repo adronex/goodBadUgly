@@ -7,6 +7,7 @@ public class GameCore
     public static event GameDoStartedEventHandler GameDoStartedEvent; //todo: change events/delegates names
     public static event GameDoWaitedEventHandler GameDoWaitedEvent;
     public static event GameDoCountdownEventHandler GameDoCountdownEvent;
+    public static event GameOverEventHandler GameOverEvent;
 
     private readonly Hero ownHero;
     private readonly Hero enemyHero;
@@ -42,8 +43,8 @@ public class GameCore
     {
         CurrentGameState = GameState.Waiting;
 
-        ownHero = new OwnHero(heroesManager, 100, 6);
-        enemyHero = new EnemyHero(heroesManager, 100, 6);
+        ownHero = new OwnHero(heroesManager, 100, 6, GameObject.Find("OwnCowboy").GetComponent<Animator>());
+        enemyHero = new EnemyHero(heroesManager, 100, 6, GameObject.Find("EnemyCowboy").GetComponent<Animator>());
     }
 
     public bool CanShoot()
@@ -84,21 +85,24 @@ public class GameCore
         }
     }
 
-    public bool CheckCollision(Hero hero, Vector2 bulletPos)
+    public bool CheckCollision(Hero hero, Transform bullet)
     {
         var gunpoint = hero.Gunpoint;
         var gunpointPos = gunpoint.position;
 
         var bodyParts = hero.BodyParts;
-        int damageCount = CollisionController.CheckCollision(bulletPos, gunpointPos, bodyParts);
-        if (damageCount > 0)
+
+        int partId;
+        int damageCount = CollisionController.CheckCollision(bullet.position, gunpointPos, bodyParts, out partId);
+        if (damageCount <= 0)
         {
-            Damage(hero, damageCount);
-            CheckEndGame();
-            return true;
+            return false;
         }
 
-        return false;
+        hero.PlayAnimation(partId);
+        Damage(hero, damageCount);
+        CheckEndGame(hero);
+        return true;
     }
 
 
@@ -108,12 +112,16 @@ public class GameCore
     }
     #endregion
     #region Private methods
-    private void CheckEndGame()
+    private void CheckEndGame(Hero hero)
     {
-        var anyIsDead = ownHero.IsDead || ownHero.IsDead;
-        if (CurrentGameState == GameState.Battle && anyIsDead)
+        if (CurrentGameState == GameState.Battle && hero.IsDead)
         {
             CurrentGameState = GameState.End;
+
+            if (GameOverEvent != null)
+            {
+                GameOverEvent();
+            }
         }
     }
 
@@ -127,5 +135,7 @@ public class GameCore
     public delegate void GameDoStartedEventHandler();
     public delegate void GameDoWaitedEventHandler();
     public delegate void GameDoCountdownEventHandler();
+    public delegate void GameOverEventHandler();
     #endregion
 }
+
