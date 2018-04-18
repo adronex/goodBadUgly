@@ -3,12 +3,36 @@
 public class Bullet : MonoBehaviour
 {
     #region Fields
-    public const float BULLET_SPEED = 1F;
+    private static Quaternion AddRotation = Quaternion.Euler(0, 0, -90);
+
+    private static Transform bulletStorage;
+    private float bulletSpeed;
+
+    public float BulletSpeed
+    {
+        get { return bulletSpeed; }
+    }
     #endregion
     #region Unity lifecycle
     private void Update()
     {
-        transform.position += transform.right * BULLET_SPEED;
+        transform.position += transform.right * bulletSpeed * Time.deltaTime;
+    }
+
+    public static Transform CreateBullet(GameObject prefab, float speed, Transform gunpoint, Vector3 offset, out Vector2 bulletRotation)
+    {
+        if (bulletStorage == null)
+        {
+            bulletStorage = new GameObject("BulletStorage").transform;
+        }
+
+        var bullet = Instantiate(prefab, gunpoint.position - offset, gunpoint.rotation * AddRotation, bulletStorage);
+        bullet.GetComponent<Bullet>().bulletSpeed = speed;
+        
+        var transform = bullet.transform;
+        bulletRotation = transform.right;
+
+        return transform;
     }
     #endregion
 }

@@ -5,48 +5,35 @@ namespace Controller
     public static class CollisionController
     {
         #region Public methods
-        public static int CheckCollision(Vector2 bulletPos, Vector3 gunpointPos, BodyPart[] bodyParts, out int partId)
+        public static int GetCollidedBodyPartId(Vector2 previous,Vector2 current, BodyPart[] bodyParts)
         {
-            for (int i = 0; i < bodyParts.Length; i++)
+            bool success = false;
+            for (int id = 0; id < bodyParts.Length; id++)
             {
-                var bodyPart = bodyParts[i];
+                Vector2[] points = GetRealPoints(bodyParts[id]);
 
-                Vector2[] points = GetRealPoints(bodyPart);
-
-                var min = float.MaxValue;
-                var max = float.MinValue;
-                var minId = 0;
-                var maxId = 0;
-
-                for (var j = 0; j < points.Length; j++)
+                success = Intersect(previous, current, points[0], points[1]);
+                if (!success)
                 {
-                    var dist = Vector2.Distance(points[j], bulletPos);
-                    if (dist < min)
-                    {
-                        min = dist;
-                        minId = j;
-                    }
-                    else if (dist > max)
-                    {
-                        max = dist;
-                        maxId = j;
-                    }
+                    success = Intersect(previous, current, points[1], points[2]);
+                }
+                else if (!success)
+                {
+                    success = Intersect(previous, current, points[2], points[3]);
+                }
+                else if (!success)
+                {
+                    success = Intersect(previous, current, points[3], points[0]);
                 }
 
-                Vector2[] possiblePoints = GetPossiblePoints(points, minId, maxId, gunpointPos);
-
-                if (IsBelongToHeroPart(bulletPos, possiblePoints))
+                if (success)
                 {
-                    partId = i;
-                    return bodyPart.Damage;
+                    return id;
                 }
             }
-
-            partId = -1;
             return -1;
         }
         #endregion
-
         #region Private methods
         private static Vector2[] GetRealPoints(BodyPart bodyPart)
         {
@@ -54,69 +41,112 @@ namespace Controller
 
             return new[]
                 {
-                    new Vector2(pos.x - bodyPart.Width, pos.y - bodyPart.Height),
-                    new Vector2(pos.x + bodyPart.Width, pos.y - bodyPart.Height),
-                    new Vector2(pos.x + bodyPart.Width, pos.y + bodyPart.Height),
-                    new Vector2(pos.x - bodyPart.Width, pos.y + bodyPart.Height),
+                    new Vector2(pos.x - bodyPart.HalfWidth, pos.y - bodyPart.HalfHeight),
+                    new Vector2(pos.x + bodyPart.HalfWidth, pos.y - bodyPart.HalfHeight),
+                    new Vector2(pos.x + bodyPart.HalfWidth, pos.y + bodyPart.HalfHeight),
+                    new Vector2(pos.x - bodyPart.HalfWidth, pos.y + bodyPart.HalfHeight),
                 };
         }
 
 
-        private static Vector2[] GetPossiblePoints(Vector2[] realPoints, int minId, int maxId, Vector2 gunpoint)
+        private static bool Intersect(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
         {
-            var points = new Vector2[6];
-            var isRevert = true;
-            for (int i = 0, j = 0; j < 6; i++, j++)
+            if (!Intersect(a.x, b.x, c.x, d.x) || !Intersect(a.y, b.y, c.y, d.y))
             {
-                var direction = realPoints[i] - gunpoint;
-                var offset = direction.normalized * Bullet.BULLET_SPEED;
-                if (i == minId)
+                return false;
+            }
+
+            Vector3 m = GetLine(a, b);
+            Vector3 n = GetLine(c, d);
+
+            float zn = Det(m.x, m.y, n.x, n.y);
+            if (Mathf.Abs(zn) < Mathf.Epsilon)
+            {
+                if (Mathf.Abs(Dist(m, c)) > Mathf.Epsilon || Mathf.Abs(Dist(n, a)) > Mathf.Epsilon)
                 {
-                    points[j] = realPoints[i];
-                    continue;
-                }
-                if (i == maxId)
-                {
-                    points[j] = realPoints[i] + offset;
-                    continue;
+                    return false;
                 }
 
-                if (isRevert)
+                if (CompareVector2(b, a))
                 {
-                    points[j] = realPoints[i];
-                    points[j + 1] = realPoints[i] + offset;
-                    isRevert = false;
-                    j++;
+                    Swap(ref a, ref b);
                 }
-                else
+
+                if (CompareVector2(d, c))
                 {
-                    points[j] = realPoints[i] + offset;
-                    points[j + 1] = realPoints[i];
-                    j++;
+                    Swap(ref c, ref d);
                 }
+
+                return true;
             }
-            return points;
+            else
+            {
+                Vector2 line;
+                line.x = -Det(m.z, m.y, n.z, n.y) / zn;
+                line.y = -Det(m.x, m.z, n.x, n.z) / zn;
+                return IsBetweenPoints(a.x, b.x, line.x)
+                    && IsBetweenPoints(a.y, b.y, line.y)
+                    && IsBetweenPoints(c.x, d.x, line.x)
+                    && IsBetweenPoints(c.y, d.y, line.y);
+            }
         }
 
-
-        //https://ru.wikibooks.org/wiki/Реализации_алгоритмов/Задача_о_принадлежности_точки_многоугольнику
-        private static bool IsBelongToHeroPart(Vector2 point, Vector2[] p) //p is the points
+        private static Vector3 GetLine(Vector2 p, Vector2 q)
         {
-            var previus = p.Length - 1;
-            var isBelong = false;
+            var a = p.y - q.y;
+            var b = q.x - p.x;
+            var c = (-a * p.x) - (b * p.y);
 
-            for (var current = 0; current < p.Length; current++)
+            float z = Mathf.Sqrt(a * a + b * b);
+            if (Mathf.Abs(z) > Mathf.Epsilon)
             {
-                if (p[current].y < point.y && p[previus].y >= point.y || p[previus].y < point.y && p[current].y >= point.y)
-                {
-                    if (p[current].x + (point.y - p[current].y) / (p[previus].y - p[current].y) * (p[previus].x - p[current].x) < point.x)
-                    {
-                        isBelong = !isBelong;
-                    }
-                }
-                previus = current;
+                a /= z;
+                b /= z;
+                c /= z;
             }
-            return isBelong;
+
+            return new Vector3(a, b, c);
+        }
+
+        private static float Dist(Vector3 line, Vector2 point)
+        {
+            return line.x * point.x + line.y * point.y + line.z;
+        }
+
+        private static bool IsBetweenPoints(float l, float r, float x)
+        {
+            return Mathf.Min(l, r) <= x + Mathf.Epsilon && x <= Mathf.Max(l, r) + Mathf.Epsilon;
+        }
+
+        private static bool Intersect(float a, float b, float c, float d)
+        {
+            if (a > b) Swap(ref a, ref b);
+            if (c > d) Swap(ref c, ref d);
+            return Mathf.Max(a, c) <= Mathf.Min(b, d) + Mathf.Epsilon;
+        }
+
+        private static void Swap(ref float a, ref float b)
+        {
+            var temp = a;
+            a = b;
+            b = temp;
+        }
+
+        private static void Swap(ref Vector2 a, ref Vector2 b)
+        {
+            var temp = a;
+            a = b;
+            b = temp;
+        }
+
+        private static float Det(float a, float b, float c, float d)
+        {
+            return (a * d - b * c);
+        }
+
+        private static bool CompareVector2(Vector2 a, Vector2 b)
+        {
+            return a.x < b.x - Mathf.Epsilon || Mathf.Abs(a.x - b.x) < Mathf.Epsilon && a.y < b.y - Mathf.Epsilon;
         }
         #endregion
     }
