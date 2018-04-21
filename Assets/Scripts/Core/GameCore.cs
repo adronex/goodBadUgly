@@ -1,137 +1,181 @@
 ﻿using Controller;
+using UI;
 using UnityEngine;
 
-public class GameCore
+namespace Core
 {
-    #region Fields
-    public static event GameStartingEventHandler GameStartingEvent;
-    public static event GameWaitingEventHandler GameWaitingEvent;
-    public static event StartingCountdownEventHandler StartingCountdownEvent;
-    public static event GameEndingEventHandler GameEndingEvent;
-
-    private readonly Hero ownHero;
-    private readonly Hero enemyHero;
-    #endregion
-    #region Properties
-    public GameState CurrentGameState { get; private set; }
-
-    public Hero OwnHero
+    public class GameCore
     {
-        get { return ownHero; }
-    }
+        #region Fields
+        public static event GameStartingEventHandler GameStartingEvent;
+        public static event GameWaitingEventHandler GameWaitingEvent;
+        public static event StartingCountdownEventHandler StartingCountdownEvent;
+        public static event GameEndingEventHandler GameEndingEvent;
+        public static event GameDrawEventHandler GameDrawEvent;
 
-    public Hero EnemyHero
-    {
-        get { return enemyHero; }
-    }
+        private Hero ownHero;
+        private Hero enemyHero;
 
-    public Transform GetGunpoint(Hero hero)
-    {
-        return hero.Gunpoint;
-    }
+        private NetworkBridge networkBridge;
+        #endregion
+        #region Properties
+        public GameState CurrentGameState { get; private set; }
 
-    #endregion
-    #region Public methods
-    public GameCore(HeroInfo ownHeroInfo, HeroInfo enemyHeroInfo)
-    {
-        CurrentGameState = GameState.Waiting;
-
-        ownHero = new OwnHero(ownHeroInfo);
-        enemyHero = new EnemyHero(enemyHeroInfo);
-    }
-
-    public void Shoot(Hero hero)
-    {
-        hero.Shoot();
-    }
-
-    public bool CanShoot()
-    {
-        if (ownHero.CanShoot)
+        public Transform GetGunpoint(Hero hero)
         {
-            return false;
+            return hero.Gunpoint;
         }
 
-        ownHero.ReduceAmmo();
-        return true;
-    }
-
-    public void StartWaiting()
-    {
-        CurrentGameState = GameState.Waiting;
-        if (GameWaitingEvent != null)
+        #endregion
+        #region Public methods
+        public GameCore()
         {
-            GameWaitingEvent();
-        }
-    }
-
-    public void StartCountdown()
-    {
-        CurrentGameState = GameState.Countdown;
-        if (StartingCountdownEvent != null)
-        {
-            StartingCountdownEvent();
-        }
-    }
-
-    public void StartGame()
-    {
-        CurrentGameState = GameState.Battle;
-        if (GameStartingEvent != null)
-        {
-            GameStartingEvent();
-        }
-    }
-
-    public bool CheckCollision(Hero hero, Vector2 previous, Vector2 current)
-    {
-        var bodyParts = hero.BodyParts;
-
-        var bodyPartId = CollisionController.GetCollidedBodyPartId(previous, current, bodyParts);
-        if (bodyPartId == -1)
-        {
-            return false;
+            CurrentGameState = GameState.Waiting;
         }
 
-        var bodyPart = bodyParts[bodyPartId];
-
-        hero.PlayAnimation(bodyPartId);
-        Damage(hero, bodyPart.Damage);
-        CheckEndGame(hero);
-        return true;
-    }
-
-
-    public void RotateHand(Hero hero, Vector2 aim)
-    {
-        hero.RotateHand(aim);
-    }
-    #endregion
-    #region Private methods
-    private void CheckEndGame(Hero hero)
-    {
-        if (CurrentGameState == GameState.Battle && hero.IsDead)
+        public Hero LoadOwnHero(GameObject ownHeroObject)
         {
-            CurrentGameState = GameState.End;
+            var heroInfo = ownHeroObject.GetComponent<HeroInfo>();
+            ownHero = new OwnHero(heroInfo);
+            return ownHero;
+        }
 
-            if (GameEndingEvent != null)
+        public Hero LoadEnemyHero(GameObject enemyHeroObject)
+        {
+            var heroInfo = enemyHeroObject.GetComponent<HeroInfo>();
+            enemyHero = new EnemyHero(heroInfo);
+            return enemyHero;
+        }
+
+
+        public void MoveBullets()
+        {
+            ownHero.MoveBullets();
+            enemyHero.MoveBullets();
+        }
+
+
+        public void CheckCollisions()
+        {
+            CheckCollision(ownHero, enemyHero);
+            CheckCollision(enemyHero, ownHero);
+        }
+
+
+        public void StartWaiting()
+        {
+            CurrentGameState = GameState.Waiting;
+            if (GameWaitingEvent != null)
             {
-                GameEndingEvent();
+                GameWaitingEvent();
             }
         }
-    }
 
 
-    private void Damage(Hero hero, int damageCount)
-    {
-        hero.ReduceHp(damageCount);
+        public void StartCountdown()
+        {
+            CurrentGameState = GameState.Countdown;
+            if (StartingCountdownEvent != null)
+            {
+                StartingCountdownEvent();
+            }
+        }
+
+
+        public void StartGame()
+        {
+            CurrentGameState = GameState.Battle;
+            if (GameStartingEvent != null)
+            {
+                GameStartingEvent();
+            }
+        }
+        #endregion
+        #region Private Methods
+        private bool CheckCollision(Hero shooter, Hero victim)
+        {
+            var bullets = shooter.GetBullets;
+
+            for (int i = 0; i < bullets.Length; i++)
+            {
+                var bullet = bullets[i];
+                if (bullet == null)
+                {
+                    return false;
+                }
+
+                var previous = bullet.previousBulletPos;
+                var current = bullet.currentBulletPos;
+
+                var bodyParts = victim.BodyParts;
+                var bodyPartId = CollisionController.GetCollidedBodyPartId(previous, current, bodyParts);
+                if (bodyPartId == -1)
+                {
+                    return false;
+                }
+
+                var bodyPart = bodyParts[bodyPartId];
+                victim.Damage(bodyPart.Damage);
+
+
+                victim.PlayAnimation(bodyPartId);
+
+                if (victim.IsDead)
+                {
+                    CurrentGameState = GameState.End;
+
+                    if (GameEndingEvent != null)
+                    {
+                        GameEndingEvent();
+                    }
+                }
+
+                Bullet.DestroyBullet(bullet);
+                bullets[i] = null;
+            }
+
+            return true;
+        }
+
+        public void CheckGameDraw()
+        {
+            var anyCantShoot = !ownHero.CanShoot && !enemyHero.CanShoot;
+            if (anyCantShoot)
+            {
+                var bulletContainer = ownHero.GetBullets;
+                for (int i = 0; i < bulletContainer.Length; i++)
+                {
+                    if (bulletContainer[i] != null)
+                    {
+                        return;
+                    }
+                }
+
+                bulletContainer = enemyHero.GetBullets;
+                for (int i = 0; i < bulletContainer.Length; i++)
+                {
+                    if (bulletContainer[i] != null)
+                    {
+                        return;
+                    }
+                }
+
+                if (GameDrawEvent != null)
+                {
+                    GameDrawEvent();
+                }
+            }
+
+        }
+
+
+        #endregion
+        #region Event handlers
+        public delegate void GameStartingEventHandler();
+        public delegate void GameWaitingEventHandler();
+        public delegate void StartingCountdownEventHandler();
+        public delegate void GameEndingEventHandler();
+        public delegate void GameDrawEventHandler();
+        #endregion
     }
-    #endregion
-    #region Event handlers
-    public delegate void GameStartingEventHandler();
-    public delegate void GameWaitingEventHandler();
-    public delegate void StartingCountdownEventHandler();
-    public delegate void GameEndingEventHandler();
-    #endregion
 }
-

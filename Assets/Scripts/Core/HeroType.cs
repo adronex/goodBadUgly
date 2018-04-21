@@ -1,5 +1,8 @@
-﻿public enum HeroType
+﻿namespace Core
 {
-    Django,
-    ManWithNoName,
+    public enum HeroType
+    {
+        Django,
+        ManWithNoName,
+    }
 }

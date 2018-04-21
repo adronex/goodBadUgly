@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MenuManager : MonoBehaviour
+namespace UI.GUI
 {
-    public void LoadBattle()
+    public class MenuManager : MonoBehaviour
     {
-        SceneManager.LoadScene("Battle", LoadSceneMode.Single);
-    }
+        public void LoadBattle()
+        {
+            SceneManager.LoadScene("Battle", LoadSceneMode.Single);
+        }
 
 
-    public void LoadMenu()
-    {
-        SceneManager.LoadScene("Menu", LoadSceneMode.Single);
+        public void LoadMenu()
+        {
+            SceneManager.LoadScene("Menu", LoadSceneMode.Single);
+        }
     }
 }

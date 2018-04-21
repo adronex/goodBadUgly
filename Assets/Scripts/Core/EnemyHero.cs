@@ -1,8 +1,13 @@
-﻿public class EnemyHero : Hero
-{
-    public static HeroType heroType;
+﻿using UI;
 
-    public EnemyHero(HeroInfo heroInfo) : base(heroInfo)
-    { 
+namespace Core
+{
+    public class EnemyHero : Hero
+    {
+        public static HeroType heroType;
+
+        public EnemyHero(HeroInfo heroInfo) : base(heroInfo)
+        {
+        }
     }
 }

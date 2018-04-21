@@ -2,188 +2,196 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using Core;
 
-public class GameManager : MonoBehaviour
+namespace UI
 {
-    #region Fields
-    [SerializeField] private RectTransform AimArena;
-    [SerializeField] private RectTransform HeroArena;
-    [SerializeField] private RectTransform ShootArena;
-
-    private Transform ownBullet;
-    private Transform enemyBullet;
-
-    private GameCore gameCore;
-    private Countdown countdown;
-    private Mouse mouse;
-    
-    private IEnumerator reload;
-
-    private Vector3 gameMousePos;
-    private Vector3 mousePosition;
-    #endregion
-
-    #region Unity lifecycle
-    void Awake()
+    public class GameManager : MonoBehaviour
     {
-        var ownHero = CreateOwnHero();
-        var ownHeroInfo = ownHero.GetComponent<HeroInfo>();
+        #region Fields
+        [SerializeField] private RectTransform aimArenaRect;
+        [SerializeField] private RectTransform heroArenaRect;
+        [SerializeField] private RectTransform shootArenaRect;
 
-        var enemyHero = CreateEnemyHero();
-        var enemyHeroInfo = enemyHero.GetComponent<HeroInfo>();
+        private const float COUNTDOWN_TIMER = 0f;//must be changed!
 
-        gameCore = new GameCore(ownHeroInfo, enemyHeroInfo);
+        private GameCore gameCore;
 
-        countdown = new Countdown(gameCore, AimArena, HeroArena, ShootArena);
-        mouse = new Mouse();
-    }
+        private Hero ownHero;
+        private Hero enemyHero;
 
+        private IEnumerator reload;
+        private IEnumerator countdown;
 
-    void OnEnable()
-    {
-        Area.AimArenaEnterEvent += mouse.StartLook;
-        Area.AimArenaExitEvent += mouse.StopLook;
-        Area.HeroArenaEnterEvent += StartCountdown;
-        Area.HeroArenaExitEvent += StopCountdown;
-    }
+        private Area aimArena;
+        private Area heroArena;
+        private Area shootArena;
+        #endregion
 
+        #region Unity lifecycle
+        void Awake()
+        {
 
-    void Update()
-    {
-        mousePosition = Input.mousePosition;
+            gameCore = new GameCore();
 
-        //if the game is over, disable the hand rotation
-        if (countdown.Produce(mousePosition) == GameState.End)
+            var ownHeroObject = CreateOwnHero();
+            ownHero = gameCore.LoadOwnHero(ownHeroObject);
+
+            var enemyHeroObject = CreateEnemyHero();
+            enemyHero = gameCore.LoadEnemyHero(enemyHeroObject);
+
+            AI.CreateAI(gameCore, ownHero, enemyHero);
+
+            aimArena = new Area(aimArenaRect);
+            heroArena = new Area(heroArenaRect);
+            shootArena = new Area(shootArenaRect);
+        }
+        
+
+        void Update()
+        {
+            if (gameCore.CurrentGameState == GameState.End)
+            {
+                return;
+            }
+
+            aimArena.ResetTouch();
+            heroArena.ResetTouch();
+            shootArena.ResetTouch();
+
+#if UNITY_EDITOR
+            var touches = new[]
+            {
+                new Touch()
+                {
+                   position = Input.mousePosition
+                }
+            };
+#elif UNITY_ANDROID
+        var touchCount = Input.touchCount;
+        if (touchCount == 0)
         {
             return;
         }
 
-        if (reload == null && Input.GetKeyDown(KeyCode.W) && gameCore.CanShoot())
-        {
-            reload = ReloadRoutine();
-            StartCoroutine(reload);
-            CreateBullet(gameCore.OwnHero);
+        var touches = Input.touches;
+#endif
+
+            Vector2 touchPos;
+            foreach (var touch in touches)
+            {
+                touchPos = touch.position;
+
+                if (aimArena.IsTouched(touchPos) && gameCore.CurrentGameState == GameState.Battle)
+                {
+                    var worldPos = Camera.main.ScreenToWorldPoint(touchPos);
+                    ownHero.RotateHand(worldPos);
+                }
+
+                if (heroArena.IsTouched(touchPos))
+                {
+                    StartCountdown();
+                }
+                else
+                {
+                    StopCountdown();
+                }
+                bool isShootArenaTouched = false;
+
+#if UNITY_EDITOR
+                if (Input.GetKeyDown(KeyCode.W))
+                {
+                    isShootArenaTouched = true;
+                }
+#elif UNITY_ANDROID
+            if (shootArena.IsTouched(touchPos))
+            {
+                isShootArenaTouched = true;
+            }
+#endif
+
+                if (isShootArenaTouched)
+                {
+                    if (reload == null && gameCore.CurrentGameState == GameState.Battle && ownHero.Shoot())
+                    {
+                        reload = ReloadRoutine();
+                        StartCoroutine(reload);
+                    }
+                }
+            }
         }
 
-        //check own bullet to the collision with enemy body parts 
-        var ownHero = gameCore.OwnHero;
-        DestroyCollidedBullets(ref ownBullet, ownHero.PreviousBulletPos, ownHero.CurrentBulletPos, gameCore.EnemyHero);
-
-        ownHero.MoveBullet();
-
-        //check enemy bullets to the collisions with own body parts
-        //DestroyCollidedBullets(ref enemyBullet, gameCore.OwnHero);
-    }
-
-
-    private void LateUpdate()
-    {
-        //if the game is over, disable the hand rotation
-        if (gameCore.CurrentGameState == GameState.End)
+        private void LateUpdate()
         {
-            return;
+            gameCore.MoveBullets();
+            gameCore.CheckCollisions();
+
+            gameCore.CheckGameDraw();
+        }
+        #endregion
+        #region Private methods
+        private GameObject CreateOwnHero()
+        {
+            var prefab = LoadHero(OwnHero.heroType);
+
+            var hero = Instantiate(prefab, new Vector3(-8f, -0.34f), Quaternion.identity);
+            hero.name = "OwnCowboy";
+
+            return hero;
         }
 
-        //if the targeting is available, update the targeting position
-        if (mouse.IsLooking)
+
+        private GameObject CreateEnemyHero()
         {
-            gameMousePos = Camera.main.ScreenToWorldPoint(mousePosition);
+            var prefab = LoadHero(EnemyHero.heroType);
+
+            var hero = Instantiate(prefab, new Vector3(4f, -0.34f), Quaternion.Euler(0, 180, 0));
+            hero.name = "EnemyCowboy";
+
+            return hero;
         }
 
-        gameCore.RotateHand(gameCore.OwnHero, gameMousePos);
-    }
 
-    private void OnDisable()
-    {
-        Area.AimArenaEnterEvent -= mouse.StartLook;
-        Area.AimArenaExitEvent -= mouse.StopLook;
-        Area.HeroArenaEnterEvent -= StartCountdown;
-        Area.HeroArenaExitEvent -= StopCountdown;
-    }
-    #endregion
-    #region Public methods
-    public void CreateBullet(Hero hero)
-    {
-        var bullet = hero.Shoot();
-        ownBullet = bullet.transform;
-    }
-    #endregion
-    #region Private methods
-    private GameObject CreateOwnHero()
-    {
-        var prefab = LoadHero(OwnHero.heroType);
-
-        var hero = Instantiate(prefab, new Vector3(-8f, -0.34f), Quaternion.identity);
-        hero.name = "OwnCowboy";
-
-        return hero;
-    }
-
-
-    private GameObject CreateEnemyHero()
-    {
-        var prefab = LoadHero(EnemyHero.heroType);
-
-        var hero = Instantiate(prefab, new Vector3(4f, -0.34f), Quaternion.Euler(0, 180, 0));
-        hero.name = "EnemyCowboy";
-
-        return hero;
-    }
-
-
-    private GameObject LoadHero(HeroType heroType)
-    {
-        return Resources.Load<GameObject>(String.Format("Prefabs/Heroes/{0}", heroType.ToString()));
-    }
-
-
-
-    private void DestroyCollidedBullets(ref Transform bullet, Vector2 previous, Vector2 current, Hero hero)
-    {
-        if (bullet == null)
+        private GameObject LoadHero(HeroType heroType)
         {
-            return;
+            return Resources.Load<GameObject>(String.Format("Prefabs/Heroes/{0}", heroType.ToString()));
+        }
+        
+
+        private void StartCountdown()
+        {
+            if (gameCore.CurrentGameState != GameState.Waiting) return;
+
+            gameCore.StartCountdown();
+
+            countdown = StartCountdownRoutine();
+            StartCoroutine(countdown);
         }
 
-        if (bullet.position.x > 4)//TOOOOOOOOOOOOODDDDDDDDDDDDDDDDDDDDDDDOOOOOOOOOOOOOOOOOOOOOOO
+
+        private void StopCountdown()
         {
+            if (gameCore.CurrentGameState != GameState.Countdown) return;
+
+            StopCoroutine(countdown);
+
+            gameCore.StartWaiting();
         }
 
-        var isCollided = gameCore.CheckCollision(hero, previous, current);
-        if (isCollided)
+
+        private IEnumerator ReloadRoutine()
         {
-            Destroy(bullet.gameObject);
-            bullet = null;
+            yield return new WaitForSecondsRealtime(0.5f);
+            reload = null;
         }
+
+
+        private IEnumerator StartCountdownRoutine()
+        {
+            yield return new WaitForSeconds(COUNTDOWN_TIMER);
+
+            gameCore.StartGame();
+        }
+        #endregion
     }
-
-
-    private void StartCountdown()
-    {
-        if (gameCore.CurrentGameState != GameState.Waiting) return;
-
-        gameCore.StartCountdown();
-
-        var newCountdown = countdown.CreateNew();
-        StartCoroutine(newCountdown);
-    }
-
-
-    private void StopCountdown()
-    {
-        if (gameCore.CurrentGameState != GameState.Countdown) return;
-
-        StopCoroutine(countdown.Current);
-
-        gameCore.StartWaiting();
-    }
-
-
-    private IEnumerator ReloadRoutine()
-    {
-        yield return new WaitForSecondsRealtime(0.7f);
-        reload = null;
-    }
-    #endregion
 }
-

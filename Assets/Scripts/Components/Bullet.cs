@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Core;
+using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
@@ -6,6 +8,7 @@ public class Bullet : MonoBehaviour
     private static Quaternion AddRotation = Quaternion.Euler(0, 0, -90);
 
     private static Transform bulletStorage;
+
     private float bulletSpeed;
 
     public float BulletSpeed
@@ -14,6 +17,7 @@ public class Bullet : MonoBehaviour
     }
     #endregion
     #region Unity lifecycle
+
     private void Update()
     {
         transform.position += transform.right * bulletSpeed * Time.deltaTime;
@@ -28,11 +32,21 @@ public class Bullet : MonoBehaviour
 
         var bullet = Instantiate(prefab, gunpoint.position - offset, gunpoint.rotation * AddRotation, bulletStorage);
         bullet.GetComponent<Bullet>().bulletSpeed = speed;
-        
+
         var transform = bullet.transform;
         bulletRotation = transform.right;
-
         return transform;
+    }
+
+    internal static void DestroyBullet(BulletInfo bulletInfo)
+    {
+        DestroyBullet(bulletInfo.transform);
+    }
+
+    internal static void DestroyBullet(Transform bullet)
+    {
+        var gameObject = bullet.gameObject;
+        Destroy(gameObject);
     }
     #endregion
 }

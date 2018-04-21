@@ -1,52 +1,55 @@
 ﻿using UnityEngine;
 
-public class HeroInfo : MonoBehaviour
+namespace UI
 {
-    [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private float bulletSpeed;
-    [SerializeField] private int hp;
-    [SerializeField] private int ammo;
-    [SerializeField] private Transform handAxis;
-    [SerializeField] private Transform gunpoint;
-    [SerializeField] private Transform areas;
-
-    public GameObject BulletPrefab
+    public class HeroInfo : MonoBehaviour
     {
-        get { return bulletPrefab; }
-    }
+        [SerializeField] private GameObject bulletPrefab;
+        [SerializeField] private float bulletSpeed;
+        [SerializeField] private int hp;
+        [SerializeField] private int ammo;
+        [SerializeField] private Transform handAxis;
+        [SerializeField] private Transform gunpoint;
+        [SerializeField] private Transform areas;
 
-    public float BulletSpeed
-    {
-        get { return bulletSpeed; }
-    }
+        public GameObject BulletPrefab
+        {
+            get { return bulletPrefab; }
+        }
 
-    public int Hp
-    {
-        get { return hp; }
-    }
+        public float BulletSpeed
+        {
+            get { return bulletSpeed; }
+        }
 
-    public int Ammo
-    {
-        get { return ammo; }
-    }
+        public int Hp
+        {
+            get { return hp; }
+        }
 
-    public Animator Animator
-    {
-        get { return GetComponent<Animator>(); }
-    }
+        public int Ammo
+        {
+            get { return ammo; }
+        }
 
-    public Transform HandAxis
-    {
-        get { return handAxis; }
-    }
+        public Animator Animator
+        {
+            get { return GetComponent<Animator>(); }
+        }
 
-    public Transform Gunpoint
-    {
-        get { return gunpoint; }
-    }
+        public Transform HandAxis
+        {
+            get { return handAxis; }
+        }
 
-    public Transform Areas
-    {
-        get { return areas; }
+        public Transform Gunpoint
+        {
+            get { return gunpoint; }
+        }
+
+        public Transform Areas
+        {
+            get { return areas; }
+        }
     }
 }

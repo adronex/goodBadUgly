@@ -1,30 +1,54 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class NetworkBridge : MonoBehaviour
+namespace Core
 {
-    private static NetworkBridge instanse;
-
-    public static NetworkBridge Instanse
+    public class NetworkBridge : MonoBehaviour
     {
-        get { return instanse; }
+        private GameCore gameCore;
+
+        private void Start()
+        {
+
+        }
+
+        /*
+         *  какой уровень загружается
+         *  меняется состояние игры
+         *  стреляет
+         *  при получание 
+         * 
+         * 
+         */
+
+        public void LoadLevel(int levelId)
+        {
+        }
+
+        public void Shoot()
+        {
+            Reload(01);
+        }
+
+        private void Reload(int hero) //0 - left, 1 - right
+        {
+        }
+
+        //
+        private void StartWaiting()
+        {
+        }
+
+        private void StartCountdown()
+        {
+        }
+
+        private void StartGame()
+        {
+        }
+
+        private void GameOver()
+        {
+        }
+        //
     }
-
-    /*
-     *  какой уровень загружается
-     *  меняется состояние игры
-     *  стреляет
-     *  при получание 
-     * 
-     * 
-     */
-    public void LoadingLevel(int id)
-    {
-
-    }
-
-
-    public void 
-
 }

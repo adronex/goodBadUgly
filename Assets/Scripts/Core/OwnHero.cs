@@ -1,8 +1,13 @@
-﻿public class OwnHero : Hero
-{
-    public static HeroType heroType;
+﻿using UI;
 
-    public OwnHero(HeroInfo heroInfo) : base(heroInfo)
+namespace Core
+{
+    public class OwnHero : Hero
     {
+        public static HeroType heroType;
+
+        public OwnHero(HeroInfo heroInfo) : base(heroInfo)
+        {
+        }
     }
 }

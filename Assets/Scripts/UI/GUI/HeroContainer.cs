@@ -1,26 +1,29 @@
-﻿using System;
+﻿using Core;
 using UnityEngine;
 using UnityEngine.UI;
 
-class HeroContainer : MonoBehaviour
+namespace UI.GUI
 {
-    [SerializeField] private int heroTypeId;
-    [SerializeField] private Text pickText;
-
-
-    internal void Select()
+    class HeroContainer : MonoBehaviour
     {
-        PlayerPrefs.SetInt("CurrentOwnHero", heroTypeId);
-
-        pickText.text = "PICKED";
-
-        var heroType = (HeroType)heroTypeId;
-        OwnHero.heroType = heroType;
-    }
+        [SerializeField] private int heroTypeId;
+        [SerializeField] private Text pickText;
 
 
-    internal void Deselect()
-    {
-        pickText.text = "PICK";
+        internal void Select()
+        {
+            PlayerPrefs.SetInt("CurrentOwnHero", heroTypeId);
+
+            pickText.text = "PICKED";
+
+            var heroType = (HeroType)heroTypeId;
+            OwnHero.heroType = heroType;
+        }
+
+
+        internal void Deselect()
+        {
+            pickText.text = "PICK";
+        }
     }
 }

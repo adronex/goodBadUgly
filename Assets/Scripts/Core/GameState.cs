@@ -1,7 +1,10 @@
-﻿public enum GameState
+﻿namespace Core
 {
-    Waiting,
-    Countdown,
-    Battle,
-    End
+    public enum GameState
+    {
+        Waiting,
+        Countdown,
+        Battle,
+        End
+    }
 }
