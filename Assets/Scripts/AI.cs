@@ -24,8 +24,8 @@ public class AI : MonoBehaviour
     {
         if (GameCore.CurrentGameState == GameState.Battle)
         {
-            var ownHead = ownHero.BodyParts[1].Transform.position;
-            enemyHero.RotateHand(ownHead);
+            var ownBody = ownHero.BodyParts[1].Transform.position;
+            enemyHero.RotateHand(ownBody);
 
             if (reload == null)
             {
@@ -41,4 +41,20 @@ public class AI : MonoBehaviour
         yield return new WaitForSecondsRealtime(1f);
         reload = null;
     }
+
+    ///delete
+    private void Awake()
+    {
+        instanse = this;
+    }
+    private static AI instanse; 
+    public static void Print(float f)
+    {
+        instanse.PP(f);
+    }
+    void PP(float f)
+    {
+        print(f);
+    }
+
 }

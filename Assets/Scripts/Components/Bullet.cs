@@ -40,7 +40,7 @@ public class Bullet : MonoBehaviour
 
     internal static void DestroyBullet(BulletInfo bulletInfo)
     {
-        DestroyBullet(bulletInfo.transform);
+        DestroyBullet(bulletInfo.Transform);
     }
 
     internal static void DestroyBullet(Transform bullet)

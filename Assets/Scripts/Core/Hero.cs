@@ -4,31 +4,6 @@ using UnityEngine;
 
 namespace Core
 {
-
-    public class BulletInfo
-    {
-        public int bulletId;
-        public Vector2 currentBulletPos;
-        public Vector2 previousBulletPos;
-        public Vector2 bulletDirection;
-        public float bulletSpeed;
-        public Transform transform;
-
-        public bool MoveBullet()
-        {
-            if (Mathf.Abs(currentBulletPos.x) > 20 && Mathf.Abs(currentBulletPos.y) > 20)
-            {
-                Bullet.DestroyBullet(transform);
-                return false;
-            }
-
-            previousBulletPos = currentBulletPos;
-            currentBulletPos += bulletDirection * bulletSpeed * Time.deltaTime;
-            return true;
-        }
-    }
-
-
     public abstract class Hero
     {
         #region Fields 
@@ -105,6 +80,11 @@ namespace Core
         {
             get { return currentHp <= 0; }
         }
+
+        public bool CanShoot
+        {
+            get { return currentAmmo > 0; }
+        }
         #endregion
         #region Public Methods
 
@@ -125,21 +105,18 @@ namespace Core
         }
 
 
-        public void PlayAnimation(int bodyPartId)
+        public void PlayAnimation(BulletInfo bullet, int bodyPartId)
         {
-            var angle = Random.Range(0, 90);
+            AI.Print(bullet.ImpactAngle);
+
             animator.SetInteger("BodyPart", bodyPartId);
+
+            var angle = bullet.ImpactAngle;
             animator.SetFloat("Angle", angle);
+
             animator.SetTrigger("Do");
         }
 
-        public bool CanShoot
-        {
-            get
-            {
-                return currentAmmo > 0;
-            }
-        }
 
         public bool Shoot()
         {
@@ -147,11 +124,8 @@ namespace Core
             {
                 return false;
             }
-
-            Vector2 bulletDir = Vector2.zero;
-
-            Quaternion addRotation;
             
+            Vector2 bulletDir;
             var bul = Bullet.CreateBullet(bulletPrefab, bulletSpeed, Gunpoint, Offset, out bulletDir);
 
             AddBullet(bulletDir, bul);
@@ -161,17 +135,11 @@ namespace Core
             return true;
         }
 
-        private void AddBullet(Vector2 dir, Transform bul)
+        private void AddBullet(Vector2 dir, Transform bullet)
         {
-            var newBullet = new BulletInfo
-            {
-                bulletId = currentBulletID++,
-                currentBulletPos = Gunpoint.position - Offset,
-                previousBulletPos = Gunpoint.position - Offset,
-                bulletDirection = dir,
-                bulletSpeed = bulletSpeed,
-                transform = bul,
-            };
+            var gunpointPos = Gunpoint.position - Offset;
+            var newBullet = new BulletInfo(currentBulletID, gunpointPos, dir, bulletSpeed, bullet);
+            currentBulletID++;
 
             var length = bullets.Length;
             for (int i = 0; i < length; i++)

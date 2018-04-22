@@ -104,8 +104,8 @@ namespace Core
                     return false;
                 }
 
-                var previous = bullet.previousBulletPos;
-                var current = bullet.currentBulletPos;
+                var previous = bullet.PreviousPosition;
+                var current = bullet.CurrentPosition;
 
                 var bodyParts = victim.BodyParts;
                 var bodyPartId = CollisionController.GetCollidedBodyPartId(previous, current, bodyParts);
@@ -118,7 +118,7 @@ namespace Core
                 victim.Damage(bodyPart.Damage);
 
 
-                victim.PlayAnimation(bodyPartId);
+                victim.PlayAnimation(bullet, bodyPartId);
 
                 if (victim.IsDead)
                 {
