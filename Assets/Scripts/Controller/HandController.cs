@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UI;
+using UnityEngine;
 
 namespace Controller
 {
@@ -9,67 +10,51 @@ namespace Controller
 
         public Transform GunPoint { get { return gunpoint; } }
 
-        public HandController(Transform handAxis)
+        private Quaternion gunPointRot;
+
+        public HandController(HeroInfo heroInfo)
         {
-            axis = handAxis;
-            gunpoint = axis.Find("ArmLower").Find("Hand").Find("Gun").Find("Gunpoint");
+            axis = heroInfo.HandAxis;
+            gunpoint = heroInfo.Gunpoint;
+
+            var asas = gunpoint.position - gunpoint.parent.position;
+            gunPointRot = gunpoint.rotation;
         }
 
-        public void LookTo(Vector2 aim) //INCORRECT METHOD! todo: 
+        public float Delta = 1f;//target offset for parent (by Y)
+
+        private void AdjustParent(Transform tr, Vector3 target, int parentDepth)
         {
-            //aim - куда навели мышкой
-            //axis - плечо, которым управляем
-            //gunpoint - дуло пистолета
+            if (parentDepth == 0 || tr == null) return;
 
-            //var target = (Vector3)aim - gunpoint.position;
-            //var a = Quaternion.LookRotation(Vector3.Scale(target, new Vector3(1, 1, 0)), Vector3.down);
-            //var rotation = Quaternion.LookRotation(target, Vector3.);
-            //gunpoint.rotation = a;
+            AdjustParent(tr.parent, target + new Vector3(0, -Delta), parentDepth - 1);
 
-            //Vector3 global_vector = (Vector3)axis.position * axis.rotation;
-
-            //axis.rotation = rotation;
-            //var localEuler = axis.localRotation.eulerAngles;
-            //var newLocalEuler = new Vector3(0, 0, localEuler.x + 90);
-            //axis.localRotation = Quaternion.Euler(newLocalEuler);
-
-            //  var target = gunpoint.position - (Vector3)aim;
-            //  var temp = Quaternion.LookRotation(target);
-            //  transform.rotation = temp;
-            //  var local = transform.localRotation.eulerAngles;
-            //  var newLocal = new Vector3(0, 0, local.x);
-            //  transform.localRotation = Quaternion.Euler(newLocal);
-
-            /*
-            """ Get rotation Quaternion between 2 vectors """
-            v1.normalize(), v2.normalize()
-            v = v1+v2
-            v.normalize()
-            angle = v.dot(v2)
-            axis = v.cross(v2)
-            return Quaternion( angle, *axis ) 
-             */
-
-            LookAt2D(axis, -axis.up, aim);
+            tr.up = -(target - tr.position);
         }
 
-
-        public void LookAt2D(Transform me, Vector2 eye, Vector2 target)
+        public void LookTo(Vector3 aim)
         {
-            Vector2 look = target - (Vector2)me.position;
-
-            float angle = Vector2.Angle(eye, look);
-
-            Vector2 right = Vector3.Cross(Vector3.forward, look);
-
-            int dir = 1;
-
-            if (Vector2.Angle(right, eye) < 90)
-            {
-                dir = -1;
-            }
-
-            me.rotation *= Quaternion.AngleAxis(angle * dir, Vector3.forward);
+            //AdjustParent(gunpoint.transform, aim, 4);
+            var tr = new Transform[3];
+            var target = new Vector3[3];
+            
+            
+            tr[0] = gunpoint.parent.transform;
+            if (tr[0] == null) return;
+            target[0] = aim;
+            
+            tr[1] = tr[0].parent;
+            if (tr[1] == null) return;
+            target[1] = target[0] + new Vector3(0, -Delta);
+            
+            tr[2] = tr[1].parent;
+            if (tr[2] == null) return;
+            target[2] = target[1] + new Vector3(0, -Delta);
+            
+            axis.up = -(target[2] - tr[2].position);
+            tr[1].up = -(target[1] - tr[1].position);
+            gunpoint.up = -(target[0] - tr[0].position);
+            
         }
     }
 }
