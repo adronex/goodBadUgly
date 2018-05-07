@@ -13,7 +13,7 @@ namespace UI
         [SerializeField] private RectTransform heroArenaRect;
         [SerializeField] private RectTransform shootArenaRect;
 
-        private const float COUNTDOWN_TIMER = 0f;//must be changed!
+        private const float COUNTDOWN_TIMER = 1f;//must be changed!
 
         private GameCore gameCore;
 
@@ -26,6 +26,8 @@ namespace UI
         private Area aimArena;
         private Area heroArena;
         private Area shootArena;
+
+        private Vector3 rotateTo;
         #endregion
 
         #region Unity lifecycle
@@ -46,7 +48,7 @@ namespace UI
             heroArena = new Area(heroArenaRect);
             shootArena = new Area(shootArenaRect);
         }
-        
+
 
         void Update()
         {
@@ -84,8 +86,7 @@ namespace UI
 
                 if (aimArena.IsTouched(touchPos) && gameCore.CurrentGameState == GameState.Battle)
                 {
-                    var worldPos = Camera.main.ScreenToWorldPoint(touchPos);
-                    ownHero.RotateHand(worldPos);
+                    rotateTo = (Vector2)Camera.main.ScreenToWorldPoint(touchPos);
                 }
 
                 if (heroArena.IsTouched(touchPos))
@@ -117,9 +118,17 @@ namespace UI
                         reload = ReloadRoutine();
                         StartCoroutine(reload);
                     }
+
+                    if (reload == null && gameCore.CurrentGameState == GameState.Countdown)
+                    {
+                        ownHero.PlayFalseStart();
+                        print("BB");
+                    }
+
                 }
             }
         }
+
 
         private void LateUpdate()
         {
@@ -127,6 +136,8 @@ namespace UI
             gameCore.CheckCollisions();
 
             gameCore.CheckGameDraw();
+
+            ownHero.RotateHand(rotateTo);
         }
         #endregion
         #region Private methods
@@ -156,7 +167,7 @@ namespace UI
         {
             return Resources.Load<GameObject>(String.Format("Prefabs/Heroes/{0}", heroType.ToString()));
         }
-        
+
 
         private void StartCountdown()
         {
@@ -181,7 +192,7 @@ namespace UI
 
         private IEnumerator ReloadRoutine()
         {
-            yield return new WaitForSecondsRealtime(0.5f);
+            yield return new WaitForSecondsRealtime(0.05f);
             reload = null;
         }
 

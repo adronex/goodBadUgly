@@ -11,7 +11,6 @@ namespace Core
 
         public Vector2 CurrentPosition { get; private set; }
         public Vector2 PreviousPosition { get; private set; }
-        public Transform Transform { get; private set; }
 
         public float ImpactAngle
         {
@@ -19,22 +18,21 @@ namespace Core
         }
 
 
-        public BulletInfo(int bulletId, Vector2 bulletPos, Vector2 bulletDirection, float bulletSpeed, Transform bullet)
+        public BulletInfo(int bulletId, Vector2 bulletPos, Vector2 bulletDirection, float bulletSpeed)
         {
             id = bulletId;
             startPosition = CurrentPosition = PreviousPosition = bulletPos;
             direction = bulletDirection;
             speed = bulletSpeed;
-            Transform = bullet;
         }
 
         public bool MoveBullet()
         {
-            if (Mathf.Abs(CurrentPosition.x) > 20 && Mathf.Abs(CurrentPosition.y) > 20)
-            {
-                Bullet.DestroyBullet(Transform);
-                return false;
-            }
+            //if (Mathf.Abs(CurrentPosition.x) > 20 && Mathf.Abs(CurrentPosition.y) > 20)
+            //{
+            //    Bullet.DestroyBullet(Transform);
+            //    return false;
+            //}
 
             PreviousPosition = CurrentPosition;
             CurrentPosition += direction * speed * Time.deltaTime;

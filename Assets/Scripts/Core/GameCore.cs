@@ -65,6 +65,8 @@ namespace Core
         public void StartWaiting()
         {
             CurrentGameState = GameState.Waiting;
+            AI.Print(CurrentGameState);
+
             if (GameWaitingEvent != null)
             {
                 GameWaitingEvent();
@@ -75,6 +77,8 @@ namespace Core
         public void StartCountdown()
         {
             CurrentGameState = GameState.Countdown;
+            AI.Print(CurrentGameState);
+
             if (StartingCountdownEvent != null)
             {
                 StartingCountdownEvent();
@@ -85,6 +89,8 @@ namespace Core
         public void StartGame()
         {
             CurrentGameState = GameState.Battle;
+            AI.Print(CurrentGameState);
+
             if (GameStartingEvent != null)
             {
                 GameStartingEvent();
@@ -123,6 +129,8 @@ namespace Core
                 if (victim.IsDead)
                 {
                     CurrentGameState = GameState.End;
+                    AI.Print(CurrentGameState);
+
 
                     if (GameEndingEvent != null)
                     {
@@ -130,7 +138,6 @@ namespace Core
                     }
                 }
 
-                Bullet.DestroyBullet(bullet);
                 bullets[i] = null;
             }
 

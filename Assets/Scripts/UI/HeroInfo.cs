@@ -11,6 +11,12 @@ namespace UI
         [SerializeField] private Transform handAxis;
         [SerializeField] private Transform gunpoint;
         [SerializeField] private Transform areas;
+        [SerializeField] private Transform body;
+        [SerializeField] private Transform hero;
+        [SerializeField] private Transform leftLeg;
+        [SerializeField] private Transform rightLeg;
+        [SerializeField] private Transform falseStart;
+
 
         public GameObject BulletPrefab
         {
@@ -50,6 +56,31 @@ namespace UI
         public Transform Areas
         {
             get { return areas; }
+        }
+
+        public Transform Body
+        {
+            get { return body; }
+        }
+
+        public Transform Hero
+        {
+            get { return hero; }
+        }
+
+        public Transform LeftLeg
+        {
+            get { return leftLeg; }
+        }
+
+        public Transform RightLeg
+        {
+            get { return rightLeg; }
+        }
+
+        public Transform FalseStart
+        {
+            get { return falseStart; }
         }
     }
 }
