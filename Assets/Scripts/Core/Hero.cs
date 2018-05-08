@@ -1,4 +1,5 @@
 ﻿using Controller;
+using Graphics;
 using UI;
 using UnityEngine;
 
@@ -31,6 +32,8 @@ namespace Core
         protected float bulletSpeed;
 
         protected BulletInfo[] bullets = new BulletInfo[6];
+        protected int currentBulletID;
+
 
         public BulletInfo[] GetBullets
         {
@@ -57,13 +60,12 @@ namespace Core
             }
         }
 
-        protected int currentBulletID;
 
         #endregion
         #region Properties
         public Transform Gunpoint
         {
-            get { return hand.GunPoint; }
+            get { return hand.Gunpoint; }
         }
 
         public Vector3 Offset
@@ -85,6 +87,11 @@ namespace Core
         {
             get { return currentAmmo > 0; }
         }
+
+        public float BulletSpeed
+        {
+            get { return bulletSpeed; }
+        }
         #endregion
         #region Public Methods
 
@@ -101,6 +108,16 @@ namespace Core
 
         public void RotateHand(Vector2 aim)
         {
+            if (aim == Vector2.zero)
+            {
+                return;
+            }
+
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("FalseStart"))
+            {
+                return;
+            }
+
             hand.LookTo(aim);
         }
 
@@ -118,27 +135,46 @@ namespace Core
         }
 
 
+        internal void PlayFalseStart()
+        {
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("FalseStart"))
+            {
+                return;
+            }
+
+            animator.SetTrigger("FalseStart");
+        }
+
+
         public bool Shoot()
         {
             if (!CanShoot)
             {
                 return false;
             }
-            
-            Vector2 bulletDir;
-            var bul = Bullet.CreateBullet(bulletPrefab, bulletSpeed, Gunpoint, Offset, out bulletDir);
 
-            AddBullet(bulletDir, bul);
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("FalseStart"))
+            {
+                return false;
+            }
+
+            ClientGraphic.CreateBullet(this);
+
+            AddBullet();
 
             ReduceAmmo();
-
+            
             return true;
         }
 
-        private void AddBullet(Vector2 dir, Transform bullet)
+        private void AddBullet()
         {
+            var dir = Gunpoint.rotation * Quaternion.Euler(0, 0, -90) * Vector2.right;/////////////////////////////
+
+
+
             var gunpointPos = Gunpoint.position - Offset;
-            var newBullet = new BulletInfo(currentBulletID, gunpointPos, dir, bulletSpeed, bullet);
+            var newBullet = new BulletInfo(currentBulletID, gunpointPos, dir, bulletSpeed);
             currentBulletID++;
 
             var length = bullets.Length;
@@ -153,7 +189,6 @@ namespace Core
                 return;
             }
         }
-
         #endregion
         #region Private Methods
         protected Hero(HeroInfo heroInfo)

@@ -8,7 +8,7 @@ namespace Controller
         private readonly Transform axis; //плечо
         private readonly Transform gunpoint; //
 
-        public Transform GunPoint { get { return gunpoint; } }
+        public Transform Gunpoint { get { return gunpoint; } }
 
         private Quaternion gunPointRot;
 

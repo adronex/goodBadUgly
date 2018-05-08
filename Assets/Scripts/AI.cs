@@ -38,7 +38,7 @@ public class AI : MonoBehaviour
 
     private IEnumerator ReloadRoutine()
     {
-        yield return new WaitForSecondsRealtime(1f);
+        yield return new WaitForSecondsRealtime(2f); //reload
         reload = null;
     }
 
@@ -52,7 +52,15 @@ public class AI : MonoBehaviour
     {
         instanse.PP(f);
     }
+    public static void Print(GameState f)
+    {
+        instanse.PP(f);
+    }
     void PP(float f)
+    {
+        print(f);
+    }
+    void PP(GameState f)
     {
         print(f);
     }

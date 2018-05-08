@@ -1374,10 +1374,15 @@ MonoBehaviour:
     type: 2}
   bulletSpeed: 50
   hp: 100
-  ammo: 6
+  ammo: 30
   handAxis: {fileID: 4448593284780644}
   gunpoint: {fileID: 4348480153253206}
   areas: {fileID: 4235735795786812}
+  body: {fileID: 0}
+  hero: {fileID: 0}
+  leftLeg: {fileID: 0}
+  rightLeg: {fileID: 0}
+  falseStart: {fileID: 0}
 --- !u!114 &114085909649846686
 MonoBehaviour:
   m_ObjectHideFlags: 1
