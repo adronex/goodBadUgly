@@ -37,10 +37,7 @@ namespace Core
 
         public BulletInfo[] GetBullets
         {
-            get
-            {
-                return bullets;
-            }
+            get { return bullets; }
         }
 
         internal void MoveBullets()
@@ -124,7 +121,7 @@ namespace Core
 
         public void PlayAnimation(BulletInfo bullet, int bodyPartId)
         {
-            AI.Print(bullet.ImpactAngle);
+            //AI.Print(bullet.ImpactAngle);
 
             animator.SetInteger("BodyPart", bodyPartId);
 
@@ -163,7 +160,7 @@ namespace Core
             AddBullet();
 
             ReduceAmmo();
-            
+
             return true;
         }
 

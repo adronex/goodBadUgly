@@ -65,7 +65,6 @@ namespace Core
         public void StartWaiting()
         {
             CurrentGameState = GameState.Waiting;
-            AI.Print(CurrentGameState);
 
             if (GameWaitingEvent != null)
             {
@@ -77,7 +76,6 @@ namespace Core
         public void StartCountdown()
         {
             CurrentGameState = GameState.Countdown;
-            AI.Print(CurrentGameState);
 
             if (StartingCountdownEvent != null)
             {
@@ -89,7 +87,6 @@ namespace Core
         public void StartGame()
         {
             CurrentGameState = GameState.Battle;
-            AI.Print(CurrentGameState);
 
             if (GameStartingEvent != null)
             {
@@ -98,7 +95,7 @@ namespace Core
         }
         #endregion
         #region Private Methods
-        private bool CheckCollision(Hero shooter, Hero victim)
+        private void CheckCollision(Hero shooter, Hero victim)
         {
             var bullets = shooter.GetBullets;
 
@@ -107,7 +104,7 @@ namespace Core
                 var bullet = bullets[i];
                 if (bullet == null)
                 {
-                    return false;
+                    continue;
                 }
 
                 var previous = bullet.PreviousPosition;
@@ -117,7 +114,7 @@ namespace Core
                 var bodyPartId = CollisionController.GetCollidedBodyPartId(previous, current, bodyParts);
                 if (bodyPartId == -1)
                 {
-                    return false;
+                    continue;
                 }
 
                 var bodyPart = bodyParts[bodyPartId];
@@ -129,8 +126,6 @@ namespace Core
                 if (victim.IsDead)
                 {
                     CurrentGameState = GameState.End;
-                    AI.Print(CurrentGameState);
-
 
                     if (GameEndingEvent != null)
                     {
@@ -141,7 +136,6 @@ namespace Core
                 bullets[i] = null;
             }
 
-            return true;
         }
 
         public void CheckGameDraw()

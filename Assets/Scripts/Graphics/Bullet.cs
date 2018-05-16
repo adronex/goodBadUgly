@@ -10,6 +10,11 @@ namespace Graphics
         #endregion
 
         #region Properties
+        public float Speed
+        {
+            get { return speed; }
+        }
+
         internal bool IsBusy
         {
             get { return !gameObject.activeSelf; }
@@ -43,7 +48,7 @@ namespace Graphics
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.right, speed * Time.deltaTime, 1 << 8);
             if (hit.collider != null)
             {
-                CreateBlood(hit.transform, transform);
+                CreateBlood(hit);
             }
 
             transform.position += transform.right * speed * Time.deltaTime;
@@ -51,7 +56,7 @@ namespace Graphics
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            CreateBlood(collision.transform, transform);
+            CreateBlood(collision.transform);
         }
         #endregion
 
@@ -59,17 +64,25 @@ namespace Graphics
         internal void Create(Vector2 position, Quaternion rotation, float speed)
         {
             transform.position = position;
-            transform.rotation = rotation;
+            transform.localEulerAngles = new Vector3(0f, 0f, rotation.eulerAngles.z);
             this.speed = speed;
 
             gameObject.SetActive(true);
         }
         #endregion
 
-        private void CreateBlood(Transform collision, Transform bullet)
+        private void CreateBlood(Transform collision)
         {
             gameObject.SetActive(false);
-            ClientGraphic.CreateBlood(collision, bullet);
+            ClientGraphic.CreateBlood(collision, transform, Vector3.zero);
+        }
+
+        private void CreateBlood(RaycastHit2D hit)
+        {
+            gameObject.SetActive(false);
+
+            var offset = transform.right * hit.distance;
+            ClientGraphic.CreateBlood(hit.transform, transform, offset);
         }
     }
 }

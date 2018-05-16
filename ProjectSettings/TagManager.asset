@@ -41,3 +41,48 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Body
+    uniqueID: 1282461371
+    locked: 0
+  - name: Head
+    uniqueID: 3391177899
+    locked: 0
+  - name: ArmUpper_R
+    uniqueID: 4013779057
+    locked: 0
+  - name: ArmLower_R
+    uniqueID: 1499050965
+    locked: 0
+  - name: Hand_R
+    uniqueID: 4280370925
+    locked: 0
+  - name: Gun
+    uniqueID: 900950617
+    locked: 0
+  - name: ArmUpper_L
+    uniqueID: 2763833729
+    locked: 0
+  - name: ArmLower_L
+    uniqueID: 1887649955
+    locked: 0
+  - name: Hand_L
+    uniqueID: 395026043
+    locked: 0
+  - name: LegUpper_R
+    uniqueID: 2730720861
+    locked: 0
+  - name: LegLower_R
+    uniqueID: 1589181141
+    locked: 0
+  - name: Foot_R
+    uniqueID: 1212873683
+    locked: 0
+  - name: LegUpper_L
+    uniqueID: 1331634843
+    locked: 0
+  - name: LegLower_L
+    uniqueID: 2677483353
+    locked: 0
+  - name: Foot_L
+    uniqueID: 2773000713
+    locked: 0

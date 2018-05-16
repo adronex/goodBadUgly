@@ -14,15 +14,18 @@ namespace Controller
                 Vector2[] points = GetRealPoints(bodyParts[id]);
 
                 success = Intersect(previous, current, points[0], points[1]);
+
                 if (!success)
                 {
                     success = Intersect(previous, current, points[1], points[2]);
                 }
-                else if (!success)
+
+                if (!success)
                 {
                     success = Intersect(previous, current, points[2], points[3]);
                 }
-                else if (!success)
+
+                if (!success)
                 {
                     success = Intersect(previous, current, points[3], points[0]);
                 }
@@ -92,6 +95,7 @@ namespace Controller
             }
         }
 
+
         private static Vector3 GetLine(Vector2 p, Vector2 q)
         {
             var a = p.y - q.y;
@@ -109,15 +113,18 @@ namespace Controller
             return new Vector3(a, b, c);
         }
 
+
         private static float Dist(Vector3 line, Vector2 point)
         {
             return line.x * point.x + line.y * point.y + line.z;
         }
 
+
         private static bool IsBetweenPoints(float l, float r, float x)
         {
             return Mathf.Min(l, r) <= x + Mathf.Epsilon && x <= Mathf.Max(l, r) + Mathf.Epsilon;
         }
+
 
         private static bool Intersect(float a, float b, float c, float d)
         {
@@ -126,12 +133,14 @@ namespace Controller
             return Mathf.Max(a, c) <= Mathf.Min(b, d) + Mathf.Epsilon;
         }
 
+
         private static void Swap(ref float a, ref float b)
         {
             var temp = a;
             a = b;
             b = temp;
         }
+
 
         private static void Swap(ref Vector2 a, ref Vector2 b)
         {
@@ -140,10 +149,12 @@ namespace Controller
             b = temp;
         }
 
+
         private static float Det(float a, float b, float c, float d)
         {
             return (a * d - b * c);
         }
+
 
         private static bool CompareVector2(Vector2 a, Vector2 b)
         {

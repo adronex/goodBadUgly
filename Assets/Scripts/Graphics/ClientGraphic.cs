@@ -45,7 +45,7 @@ namespace Graphics
             var gunpoint = hero.Gunpoint;
 
             var position = gunpoint.position - hero.Offset;
-            var rotation = gunpoint.rotation * Quaternion.Euler(0, 0, -90);
+            var rotation = gunpoint.rotation * Quaternion.Euler(0f, 0f, -90f);
 
             instanse.bulletPool.Create(position, rotation, hero.BulletSpeed);
 
@@ -53,11 +53,15 @@ namespace Graphics
         }
 
 
-        public static void CreateBlood(Transform collision, Transform bullet)
+        public static void CreateBlood(Transform collision, Transform bullet, Vector3 offset)
         {
             AudioManager.Hurt(collision);
 
-            instanse.bloodHolePool.Create(bullet);
+            var bulletSpeed = bullet.GetComponent<Bullet>().Speed;
+            var randomOffset = offset * Random.Range(1.3f, 1.7f);
+
+            var bloodHolePos = bullet.position + randomOffset * bulletSpeed * Time.deltaTime;
+            instanse.bloodHolePool.Create(bloodHolePos);
 
             var bodyPartName = collision.GetComponent<BodyPartName>().Name;
 
@@ -77,24 +81,7 @@ namespace Graphics
                     throw new UnityException();
             }
 
-            bloodPool.Create(bullet.position, bullet.rotation);
-        }
-        #endregion
-
-        #region Private methods
-        private void CreateBloodHole(Collision2D collision, Transform bullet)
-        {
-            var offset = Random.Range(0, 0.7f);
-            var position = bullet.position + bullet.right * offset;
-
-            var ass = Physics2D.CircleCastAll(position, 0.1f, Vector2.zero);
-
-            print(ass.Length);
-
-            for (int i = 0; i < ass.Length; i++)
-            {
-                Instantiate(bloodHolePrefab, position, Quaternion.identity, ass[i].transform);
-            }
+            bloodPool.Create(bullet.position + offset, bullet.rotation);
         }
         #endregion
     }

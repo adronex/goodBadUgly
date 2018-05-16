@@ -8,7 +8,6 @@ namespace UI
         [SerializeField] private float bulletSpeed;
         [SerializeField] private int hp;
         [SerializeField] private int ammo;
-        [SerializeField] private Transform handAxis;
         [SerializeField] private Transform gunpoint;
         [SerializeField] private Transform areas;
         [SerializeField] private Transform body;
@@ -41,11 +40,6 @@ namespace UI
         public Animator Animator
         {
             get { return GetComponent<Animator>(); }
-        }
-
-        public Transform HandAxis
-        {
-            get { return handAxis; }
         }
 
         public Transform Gunpoint

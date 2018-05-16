@@ -29,7 +29,7 @@ public class AI : MonoBehaviour
 
             if (reload == null)
             {
-                enemyHero.Shoot();
+             //   enemyHero.Shoot();
                 reload = ReloadRoutine();
                 StartCoroutine(reload);
             }
@@ -41,28 +41,4 @@ public class AI : MonoBehaviour
         yield return new WaitForSecondsRealtime(2f); //reload
         reload = null;
     }
-
-    ///delete
-    private void Awake()
-    {
-        instanse = this;
-    }
-    private static AI instanse; 
-    public static void Print(float f)
-    {
-        instanse.PP(f);
-    }
-    public static void Print(GameState f)
-    {
-        instanse.PP(f);
-    }
-    void PP(float f)
-    {
-        print(f);
-    }
-    void PP(GameState f)
-    {
-        print(f);
-    }
-
 }

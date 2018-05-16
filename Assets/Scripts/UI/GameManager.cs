@@ -122,9 +122,7 @@ namespace UI
                     if (reload == null && gameCore.CurrentGameState == GameState.Countdown)
                     {
                         ownHero.PlayFalseStart();
-                        print("BB");
                     }
-
                 }
             }
         }

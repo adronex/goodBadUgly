@@ -20,19 +20,18 @@ namespace Core
 
         public BulletInfo(int bulletId, Vector2 bulletPos, Vector2 bulletDirection, float bulletSpeed)
         {
-            id = bulletId;
             startPosition = CurrentPosition = PreviousPosition = bulletPos;
+            id = bulletId;
             direction = bulletDirection;
             speed = bulletSpeed;
         }
 
         public bool MoveBullet()
         {
-            //if (Mathf.Abs(CurrentPosition.x) > 20 && Mathf.Abs(CurrentPosition.y) > 20)
-            //{
-            //    Bullet.DestroyBullet(Transform);
-            //    return false;
-            //}
+            if (Mathf.Abs(CurrentPosition.x) > 20 || Mathf.Abs(CurrentPosition.y) > 20)
+            {
+                return false;
+            }
 
             PreviousPosition = CurrentPosition;
             CurrentPosition += direction * speed * Time.deltaTime;
