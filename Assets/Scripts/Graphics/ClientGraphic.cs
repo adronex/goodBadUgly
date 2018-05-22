@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using Audio;
+using Core.Heroes;
 using UnityEngine;
 
 namespace Graphics
@@ -6,6 +7,8 @@ namespace Graphics
     public class ClientGraphic : MonoBehaviour
     {
         #region Fields
+        private static ClientGraphic instanse;
+
         [SerializeField] GameObject bulletPrefab;
         [SerializeField] GameObject headBloodPrefab;
         [SerializeField] GameObject bodyBloodPrefab;
@@ -17,10 +20,7 @@ namespace Graphics
         BloodPool bodyBloodPool;
         BloodPool legBloodPool;
         BloodHolePool bloodHolePool;
-
-        private static ClientGraphic instanse;
         #endregion
-
         #region Unity lifecycle
         private void Awake()
         {
@@ -33,21 +33,15 @@ namespace Graphics
             instanse = this;
         }
         #endregion
-
         #region Public fields
-        public static void CreateBullet(Vector2 position, Quaternion rotation, float speed)
-        {
-            instanse.bulletPool.Create(position, rotation, speed);
-        }
-
         public static void CreateBullet(Hero hero)
         {
             var gunpoint = hero.Gunpoint;
+            var rotation = gunpoint.rotation * Helps.BulletStartRotation;
 
-            var position = gunpoint.position - hero.Offset;
-            var rotation = gunpoint.rotation * Quaternion.Euler(0f, 0f, -90f);
+            var bulletSprite = hero.BulletSprite;
 
-            instanse.bulletPool.Create(position, rotation, hero.BulletSpeed);
+            instanse.bulletPool.Create(bulletSprite, gunpoint.position, rotation, hero.BulletSpeed);
 
             AudioManager.Shoot(hero);
         }
@@ -58,13 +52,12 @@ namespace Graphics
             AudioManager.Hurt(collision);
 
             var bulletSpeed = bullet.GetComponent<Bullet>().Speed;
-            var randomOffset = offset * Random.Range(1.3f, 1.7f);
+            var randomOffset = offset * Random.Range(Helps.MinBloodHoleOffset, Helps.MaxBloodHoleOffset);
 
             var bloodHolePos = bullet.position + randomOffset * bulletSpeed * Time.deltaTime;
             instanse.bloodHolePool.Create(bloodHolePos);
 
             var bodyPartName = collision.GetComponent<BodyPartName>().Name;
-
             BloodPool bloodPool;
             switch (bodyPartName)
             {

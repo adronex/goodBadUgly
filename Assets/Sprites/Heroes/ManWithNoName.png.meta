@@ -1,0 +1,517 @@
+fileFormatVersion: 2
+guid: 7146a439f44924e44bb375dc422892bd
+timeCreated: 1526852749
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: Neck
+    21300002: Head
+    21300004: Brow_R
+    21300006: Brow-L
+    21300008: Hat
+    21300010: Eye_R
+    21300012: Eye_L
+    21300014: Nose
+    21300016: Mouse
+    21300018: Cigar
+    21300020: ArmUpper_R
+    21300022: ArmUpper_L
+    21300024: UpCloak
+    21300026: LeftCloak
+    21300028: ArmLower_R
+    21300030: ArmLower_L
+    21300032: Cloak
+    21300034: Body
+    21300036: Hand
+    21300038: LegUpper_R
+    21300040: LegLower_R
+    21300042: LegUpper_L
+    21300044: LegLower_L
+    21300046: Pocket
+    21300048: Gun
+    21300050: Cord
+    21300052: Foot
+    21300054: Holster
+  externalObjects: {}
+  serializedVersion: 4
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: -1
+    mipBias: -1
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 400
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - buildTarget: DefaultTexturePlatform
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - buildTarget: Standalone
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - buildTarget: Android
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Neck
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 1733
+        width: 110
+        height: 205
+      alignment: 9
+      pivot: {x: 0.5, y: 0.1394218}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Head
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 1670
+        width: 217
+        height: 262
+      alignment: 9
+      pivot: {x: 0.3847701, y: 0.2962359}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Brow_R
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 1845
+        width: 55
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Brow-L
+      rect:
+        serializedVersion: 2
+        x: 477
+        y: 1844
+        width: 31
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Hat
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 1768
+        width: 414
+        height: 132
+      alignment: 9
+      pivot: {x: 0.494663, y: 0.124054}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Eye_R
+      rect:
+        serializedVersion: 2
+        x: 411
+        y: 1825
+        width: 43
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Eye_L
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 1826
+        width: 25
+        height: 11
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Nose
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 1767
+        width: 22
+        height: 52
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Mouse
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 1743
+        width: 32
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Cigar
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 1742
+        width: 35
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: ArmUpper_R
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 1362
+        width: 86
+        height: 289
+      alignment: 9
+      pivot: {x: 0.5, y: 0.9}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: ArmUpper_L
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 1362
+        width: 93
+        height: 289
+      alignment: 9
+      pivot: {x: 0.5, y: 0.9}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: UpCloak
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 1535
+        width: 345
+        height: 127
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: LeftCloak
+      rect:
+        serializedVersion: 2
+        x: 687
+        y: 1588
+        width: 105
+        height: 114
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: ArmLower_R
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 1059
+        width: 75
+        height: 285
+      alignment: 9
+      pivot: {x: 0.5, y: 0.88}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: ArmLower_L
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 1061
+        width: 79
+        height: 289
+      alignment: 9
+      pivot: {x: 0.5, y: 0.88}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Cloak
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 825
+        width: 371
+        height: 690
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Body
+      rect:
+        serializedVersion: 2
+        x: 688
+        y: 958
+        width: 303
+        height: 578
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Hand
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 815
+        width: 109
+        height: 199
+      alignment: 9
+      pivot: {x: 0.3923409, y: 0.8885816}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: LegUpper_R
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 359
+        width: 140
+        height: 401
+      alignment: 9
+      pivot: {x: 0.5047959, y: 0.898717}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: LegLower_R
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 354
+        width: 117
+        height: 382
+      alignment: 9
+      pivot: {x: 0.4554428, y: 0.9102966}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: LegUpper_L
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 340
+        width: 139
+        height: 401
+      alignment: 9
+      pivot: {x: 0.5047959, y: 0.898717}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: LegLower_L
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 350
+        width: 117
+        height: 382
+      alignment: 9
+      pivot: {x: 0.4554428, y: 0.9102966}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Pocket
+      rect:
+        serializedVersion: 2
+        x: 683
+        y: 537
+        width: 257
+        height: 158
+      alignment: 9
+      pivot: {x: 0.5022613, y: 0.9206318}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Gun
+      rect:
+        serializedVersion: 2
+        x: 348
+        y: 40
+        width: 143
+        height: 262
+      alignment: 9
+      pivot: {x: 0.8433871, y: 0.028754}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Cord
+      rect:
+        serializedVersion: 2
+        x: 673
+        y: 291
+        width: 236
+        height: 176
+      alignment: 9
+      pivot: {x: 0.5, y: 0.8976962}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Foot
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 28
+        width: 236
+        height: 143
+      alignment: 9
+      pivot: {x: 0.2153955, y: 0.8127522}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: Holster
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 66
+        width: 72
+        height: 189
+      alignment: 9
+      pivot: {x: 0.5, y: 0.8717595}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    outline: []
+    physicsShape: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

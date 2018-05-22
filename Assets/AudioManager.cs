@@ -1,92 +1,100 @@
-﻿using Core;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Core.Heroes;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour
+namespace Audio
 {
-    [SerializeField] private AudioClip shoot;
-    [SerializeField] private AudioClip hurt;
-    [SerializeField] [Range(0, 1)] private float shootVolume;
-    [SerializeField] [Range(0, 1)] private float hurtVolume;
-
-    private static AudioManager instanse;
-
-    private AudioSource ownSource;
-    private AudioSource enemySource;
-
-    private void Awake()
+    public class AudioManager : MonoBehaviour
     {
-        instanse = this;
-    }
+#region Fields
+        private static AudioManager instanse;
 
+        [SerializeField] private AudioClip shoot;
+        [SerializeField] private AudioClip hurt;
+        [SerializeField] [Range(0, 1)] private float shootVolume;
+        [SerializeField] [Range(0, 1)] private float hurtVolume;
 
-    private void Start()
-    {
-        ownSource = GameObject.Find("OwnCowboy").GetComponent<AudioSource>();
-        enemySource = GameObject.Find("EnemyCowboy").GetComponent<AudioSource>();
-    }
-
-
-    public static void Shoot(Hero hero)
-    {
-        if (hero as OwnHero != null)
+        private AudioSource ownSource;
+        private AudioSource enemySource;
+        #endregion
+#region Unity lifecycle
+        private void Awake()
         {
-            instanse.OwnShoot();
-        }
-        else if (hero as EnemyHero != null)
-        {
-            instanse.EnemyShoot();
-        }
-    }
-
-    private void OwnShoot()
-    {
-        if (ownSource.volume != shootVolume)
-        {
-            ownSource.volume = shootVolume;
+            instanse = this;
         }
 
-        ownSource.PlayOneShot(shoot);
-    }
 
-    private void EnemyShoot()
-    {
-        if (enemySource.volume != shootVolume)
+        private void Start()
         {
-            enemySource.volume = shootVolume;
+            ownSource = GameObject.Find(Helps.OwnHeroName).GetComponent<AudioSource>();
+            enemySource = GameObject.Find(Helps.EnemyHeroName).GetComponent<AudioSource>();
+        }
+        #endregion
+#region Public methods
+        public static void Shoot(Hero hero)
+        {
+            if (hero as OwnHero != null)
+            {
+                instanse.OwnShoot();
+            }
+            else if (hero as EnemyHero != null)
+            {
+                instanse.EnemyShoot();
+            }
         }
 
-        enemySource.PlayOneShot(shoot);
-    }
 
-    public void HeroHurt(Transform hero)
-    {
-        var source = hero.GetComponent<AudioSource>();
-
-        if (enemySource.volume != hurtVolume)
+        public void HeroHurt(Transform hero)
         {
-            enemySource.volume = hurtVolume;
+            var source = hero.GetComponent<AudioSource>();
+
+            if (enemySource.volume != hurtVolume)
+            {
+                enemySource.volume = hurtVolume;
+            }
+
+            source.PlayOneShot(hurt);
         }
 
-        source.PlayOneShot(hurt);
-    }
 
-    public static void Hurt(Transform collision)
-    {
-        var hero = GetRootObject(collision);
-        instanse.HeroHurt(hero);
-    }
-
-    private static Transform GetRootObject(Transform collision)
-    {
-        var parent = collision.parent;
-        if (parent == null)
+        public static void Hurt(Transform collision)
         {
-            return collision;
+            var hero = GetRootObject(collision);
+            instanse.HeroHurt(hero);
+        }
+        #endregion
+        #region Private methods
+        private void OwnShoot()
+        {
+            if (ownSource.volume != shootVolume)
+            {
+                ownSource.volume = shootVolume;
+            }
+
+            ownSource.PlayOneShot(shoot);
         }
 
-        return GetRootObject(parent);
+
+        private void EnemyShoot()
+        {
+            if (enemySource.volume != shootVolume)
+            {
+                enemySource.volume = shootVolume;
+            }
+
+            enemySource.PlayOneShot(shoot);
+        }
+
+        
+        private static Transform GetRootObject(Transform collision)
+        {
+            var parent = collision.parent;
+            if (parent == null)
+            {
+                return collision;
+            }
+
+            return GetRootObject(parent);
+        }
+        #endregion
     }
 }

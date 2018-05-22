@@ -1,8 +1,9 @@
-﻿using Controller;
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections;
 using Core;
+using UI.GUI;
+using Core.Heroes;
 
 namespace UI
 {
@@ -12,8 +13,6 @@ namespace UI
         [SerializeField] private RectTransform aimArenaRect;
         [SerializeField] private RectTransform heroArenaRect;
         [SerializeField] private RectTransform shootArenaRect;
-
-        private const float COUNTDOWN_TIMER = 1f;//must be changed!
 
         private GameCore gameCore;
 
@@ -29,7 +28,6 @@ namespace UI
 
         private Vector3 rotateTo;
         #endregion
-
         #region Unity lifecycle
         void Awake()
         {
@@ -143,8 +141,8 @@ namespace UI
         {
             var prefab = LoadHero(OwnHero.heroType);
 
-            var hero = Instantiate(prefab, new Vector3(-8f, -0.34f), Quaternion.identity);
-            hero.name = "OwnCowboy";
+            var hero = Instantiate(prefab, Helps.OwnHeroStartPosition, Helps.OwnHeroStartRotation);
+            hero.name = Helps.OwnHeroName;
 
             return hero;
         }
@@ -154,8 +152,8 @@ namespace UI
         {
             var prefab = LoadHero(EnemyHero.heroType);
 
-            var hero = Instantiate(prefab, new Vector3(4f, -0.34f), Quaternion.Euler(0, 180, 0));
-            hero.name = "EnemyCowboy";
+            var hero = Instantiate(prefab, Helps.EnemyHeroStartPosition, Helps.EnemyHeroStartRotation);
+            hero.name = Helps.EnemyHeroName;
 
             return hero;
         }
@@ -163,7 +161,7 @@ namespace UI
 
         private GameObject LoadHero(HeroType heroType)
         {
-            return Resources.Load<GameObject>(String.Format("Prefabs/Heroes/{0}", heroType.ToString()));
+            return Resources.Load<GameObject>(String.Format(Helps.HeroesPath + heroType.ToString()));
         }
 
 
@@ -190,14 +188,14 @@ namespace UI
 
         private IEnumerator ReloadRoutine()
         {
-            yield return new WaitForSecondsRealtime(0.05f);
+            yield return new WaitForSecondsRealtime(Helps.ReloadTime);
             reload = null;
         }
 
 
         private IEnumerator StartCountdownRoutine()
         {
-            yield return new WaitForSeconds(COUNTDOWN_TIMER);
+            yield return new WaitForSeconds(Helps.CountdownTime);
 
             gameCore.StartGame();
         }

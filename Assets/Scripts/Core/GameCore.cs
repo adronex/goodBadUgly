@@ -1,4 +1,4 @@
-﻿using Controller;
+﻿using Core.Heroes;
 using UI;
 using UnityEngine;
 
@@ -25,7 +25,6 @@ namespace Core
         {
             return hero.Gunpoint;
         }
-
         #endregion
         #region Public methods
         public GameCore()
@@ -33,12 +32,14 @@ namespace Core
             CurrentGameState = GameState.Waiting;
         }
 
+
         public Hero LoadOwnHero(GameObject ownHeroObject)
         {
             var heroInfo = ownHeroObject.GetComponent<HeroInfo>();
             ownHero = new OwnHero(heroInfo);
             return ownHero;
         }
+
 
         public Hero LoadEnemyHero(GameObject enemyHeroObject)
         {
@@ -112,7 +113,7 @@ namespace Core
 
                 var bodyParts = victim.BodyParts;
                 var bodyPartId = CollisionController.GetCollidedBodyPartId(previous, current, bodyParts);
-                if (bodyPartId == -1)
+                if (bodyPartId == Helps.BodyPartIsNull)
                 {
                     continue;
                 }
@@ -135,8 +136,8 @@ namespace Core
 
                 bullets[i] = null;
             }
-
         }
+
 
         public void CheckGameDraw()
         {
@@ -166,10 +167,7 @@ namespace Core
                     GameDrawEvent();
                 }
             }
-
         }
-
-
         #endregion
         #region Event handlers
         public delegate void GameStartingEventHandler();

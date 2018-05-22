@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Heroes;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,15 +7,16 @@ namespace UI.GUI
 {
     class HeroContainer : MonoBehaviour
     {
+        #region Fields
         [SerializeField] private int heroTypeId;
         [SerializeField] private Text pickText;
-
-
+        #endregion
+        #region Public methods
         internal void Select()
         {
-            PlayerPrefs.SetInt("CurrentOwnHero", heroTypeId);
+            PlayerPrefs.SetInt(Helps.CurrentOwnHeroData, heroTypeId);
 
-            pickText.text = "PICKED";
+            pickText.text = Helps.HeroSelected;
 
             var heroType = (HeroType)heroTypeId;
             OwnHero.heroType = heroType;
@@ -23,7 +25,8 @@ namespace UI.GUI
 
         internal void Deselect()
         {
-            pickText.text = "PICK";
+            pickText.text = Helps.HeroUnselected;
         }
+        #endregion
     }
 }

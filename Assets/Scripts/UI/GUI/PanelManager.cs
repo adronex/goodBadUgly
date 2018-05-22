@@ -5,10 +5,12 @@ namespace UI.GUI
 {
     public class PanelManager : MonoBehaviour
     {
+        #region Fields
         [SerializeField] private GameObject mainMenu;
         [SerializeField] private GameObject settings;
         [SerializeField] private GameObject stats;
         [SerializeField] private GameObject heroChooser;
+        #endregion
         #region Settings
         public void ShowSettings()
         {
@@ -21,7 +23,6 @@ namespace UI.GUI
             settings.SetActive(false);
         }
         #endregion
-
         #region Stats
         public void ShowStats()
         {
@@ -34,7 +35,6 @@ namespace UI.GUI
             stats.SetActive(false);
         }
         #endregion
-
         #region HeroChooser
         public void ShowHeroChooser()
         {

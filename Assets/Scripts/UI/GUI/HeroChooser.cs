@@ -5,18 +5,20 @@ namespace UI.GUI
 {
     public class HeroChooser : MonoBehaviour
     {
+        #region Fields
         [SerializeField] private Transform heroGroup;
 
         private HeroContainer currentSelectedHero;
         private GameObject currentHero;
-
+        #endregion
+        #region Unity lifecycle
         private void Awake()
         {
-            var currentOwnHeroTypeId = PlayerPrefs.GetInt("CurrentOwnHero");
+            var currentOwnHeroTypeId = PlayerPrefs.GetInt(Helps.CurrentOwnHeroData);
             SelectHero(currentOwnHeroTypeId);
         }
-
-
+        #endregion
+        #region Public methods
         public void SelectHero(int id)
         {
             InstantiateHero(id);
@@ -31,8 +33,8 @@ namespace UI.GUI
 
             currentSelectedHero.Select();
         }
-
-
+        #endregion
+        #region Private methods
         private void InstantiateHero(int currentHeroTypeId)
         {
             var currentHeroType = (HeroType)currentHeroTypeId;
@@ -46,7 +48,7 @@ namespace UI.GUI
 
         private GameObject InstantiateHero(HeroType currentHeroType)
         {
-            var heroPrefab = Resources.Load<GameObject>("Prefabs/Heroes/" + currentHeroType);
+            var heroPrefab = Resources.Load<GameObject>(Helps.HeroesPath + currentHeroType);
 
             return Instantiate(heroPrefab);
         }
@@ -66,8 +68,9 @@ namespace UI.GUI
         private void StartTavernAnimation(HeroType currentHeroType)
         {
             var animator = currentHero.GetComponent<Animator>();
-            animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("Prefabs/Tavern");
-            animator.SetInteger("HeroTypeId", (int)currentHeroType);
+            animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>(Helps.TavernAnimatorPath);
+            animator.SetInteger(Helps.HeroTypeIdTavernAnim, (int)currentHeroType);
         }
+        #endregion
     }
 }

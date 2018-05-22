@@ -5,15 +5,17 @@ namespace UI.GUI
 {
     public class MenuManager : MonoBehaviour
     {
+        #region Public methods
         public void LoadBattle()
         {
-            SceneManager.LoadScene("Battle", LoadSceneMode.Single);
+            SceneManager.LoadScene(Helps.BattleScene, LoadSceneMode.Single);
         }
 
 
         public void LoadMenu()
         {
-            SceneManager.LoadScene("Menu", LoadSceneMode.Single);
+            SceneManager.LoadScene(Helps.MenuScene, LoadSceneMode.Single);
         }
+        #endregion
     }
 }
