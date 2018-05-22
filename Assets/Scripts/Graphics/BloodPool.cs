@@ -6,13 +6,10 @@ namespace Graphics
     public class BloodPool
     {
         #region Fields
-        private const int MAX_BLOOD = 2;
-
         private Blood[] bloodTextures;
 
         private static GameObject bloodStorage;
         #endregion
-
         #region Public Fields
         internal BloodPool(GameObject bloodPrefab)
         {
@@ -20,12 +17,12 @@ namespace Graphics
             {
                 bloodStorage = new GameObject
                 {
-                    name = "BloodStorage"
+                    name = Helps.BloodStorageName
                 };
             }
 
-            bloodTextures = new Blood[MAX_BLOOD];
-            for (int index = 0; index < MAX_BLOOD; index++)
+            bloodTextures = new Blood[Helps.BloodLimit];
+            for (int index = 0; index < Helps.BloodLimit; index++)
             {
                 var bloodObject = Object.Instantiate(bloodPrefab, bloodStorage.transform);
                 var bloodTexture = bloodObject.GetComponent<Blood>();
@@ -37,7 +34,7 @@ namespace Graphics
 
         internal void Create(Vector2 position, Quaternion rotation)
         {
-            for (int index = 0; index < MAX_BLOOD; index++)
+            for (int index = 0; index < Helps.BloodLimit; index++)
             {
                 var bloodTexture = bloodTextures[index];
                 if (!bloodTexture.IsBusy)

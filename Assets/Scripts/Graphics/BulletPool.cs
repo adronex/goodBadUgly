@@ -6,49 +6,52 @@ namespace Graphics
     public class BulletPool
     {
         #region Fields
-        private const int MAX_BULLETS = 4;
-
         private Bullet[] bullets;
 
         private Transform bulletStorage;
         #endregion
-
         #region Public Fields
         internal BulletPool(GameObject bulletPrefab)
         {
             bulletStorage = new GameObject().transform;
-            bulletStorage.name = "BulletStorage";
+            bulletStorage.name = Helps.BulletStorageName;
 
-            bullets = new Bullet[MAX_BULLETS];
-            for (int i = 0; i < MAX_BULLETS; i++)
+            bullets = new Bullet[Helps.BulletLimit];
+            for (int index = 0; index < Helps.BulletLimit; index++)
             {
                 var bulletObject = Object.Instantiate(bulletPrefab, bulletStorage);
                 var bullet = bulletObject.GetComponent<Bullet>();
                 bulletObject.SetActive(false);
 
-                bullets[i] = bullet;
+                bullets[index] = bullet;
             }
         }
 
 
-        internal void Create(Vector2 position, Quaternion rotation, float speed)
+        internal void Create(Sprite bulletSprite, Vector2 position, Quaternion rotation, float speed)
         {
             Bullet bullet;
-            for (int index = 0; index < MAX_BULLETS; index++)
+            for (int index = 0; index < Helps.BulletLimit; index++)
             {
                 bullet = bullets[index];
                 if (bullet.IsBusy)
                 {
-                    bullet.Create(position, rotation, speed);
+                    bullet.Create(bulletSprite, position, rotation, speed);
                     return;
                 }
             }
 
-            //if all bullets are busy
-            var farthestIndex = 0;
-            var farthest = 0f;
+            var farthestBullet = GetFarthestBullet(position, rotation, speed);
+            farthestBullet.Create(bulletSprite, position, rotation, speed);
+        }
+        #endregion
+        #region Private methods
+        private Bullet GetFarthestBullet(Vector2 position, Quaternion rotation, float speed)
+        {
+            var farthestIndex = -1;
+            var farthest = float.MaxValue;
             float distance;
-            for (int index = 0; index < MAX_BULLETS; index++)
+            for (int index = 0; index < Helps.BulletLimit; index++)
             {
                 distance = bullets[index].DistanceFromWorldCenter;
                 if (farthest < distance)
@@ -58,7 +61,7 @@ namespace Graphics
                 }
             }
 
-            bullets[farthestIndex].Create(position, rotation, speed);
+            return bullets[farthestIndex];
         }
         #endregion
     }

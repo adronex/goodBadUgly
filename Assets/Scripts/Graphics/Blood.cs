@@ -6,10 +6,8 @@ namespace Graphics
     {
         #region Fields
         private UVTextureAnimator[] bloodTextures;
-
         private int disableCount;
         #endregion
-
         #region Properties
         internal bool IsBusy
         {
@@ -19,7 +17,6 @@ namespace Graphics
             }
         }
         #endregion
-
         #region Unity lifecycle
         private void Awake()
         {
@@ -39,7 +36,6 @@ namespace Graphics
             gameObject.SetActive(false);
         }
         #endregion
-
         #region Public methods
         internal void IncrementDisable()
         {

@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using Audio;
+using Core.Heroes;
 using UnityEngine;
 
 namespace Graphics
@@ -6,6 +7,8 @@ namespace Graphics
     public class ClientGraphic : MonoBehaviour
     {
         #region Fields
+        private static ClientGraphic instanse;
+
         [SerializeField] GameObject bulletPrefab;
         [SerializeField] GameObject headBloodPrefab;
         [SerializeField] GameObject bodyBloodPrefab;
@@ -17,10 +20,7 @@ namespace Graphics
         BloodPool bodyBloodPool;
         BloodPool legBloodPool;
         BloodHolePool bloodHolePool;
-
-        private static ClientGraphic instanse;
         #endregion
-
         #region Unity lifecycle
         private void Awake()
         {
@@ -33,34 +33,31 @@ namespace Graphics
             instanse = this;
         }
         #endregion
-
         #region Public fields
-        public static void CreateBullet(Vector2 position, Quaternion rotation, float speed)
-        {
-            instanse.bulletPool.Create(position, rotation, speed);
-        }
-
         public static void CreateBullet(Hero hero)
         {
             var gunpoint = hero.Gunpoint;
+            var rotation = gunpoint.rotation * Helps.BulletStartRotation;
 
-            var position = gunpoint.position - hero.Offset;
-            var rotation = gunpoint.rotation * Quaternion.Euler(0, 0, -90);
+            var bulletSprite = hero.BulletSprite;
 
-            instanse.bulletPool.Create(position, rotation, hero.BulletSpeed);
+            instanse.bulletPool.Create(bulletSprite, gunpoint.position, rotation, hero.BulletSpeed);
 
             AudioManager.Shoot(hero);
         }
 
 
-        public static void CreateBlood(Transform collision, Transform bullet)
+        public static void CreateBlood(Transform collision, Transform bullet, Vector3 offset)
         {
             AudioManager.Hurt(collision);
 
-            instanse.bloodHolePool.Create(bullet);
+            var bulletSpeed = bullet.GetComponent<Bullet>().Speed;
+            var randomOffset = offset * Random.Range(Helps.MinBloodHoleOffset, Helps.MaxBloodHoleOffset);
+
+            var bloodHolePos = bullet.position + randomOffset * bulletSpeed * Time.deltaTime;
+            instanse.bloodHolePool.Create(bloodHolePos);
 
             var bodyPartName = collision.GetComponent<BodyPartName>().Name;
-
             BloodPool bloodPool;
             switch (bodyPartName)
             {
@@ -77,24 +74,7 @@ namespace Graphics
                     throw new UnityException();
             }
 
-            bloodPool.Create(bullet.position, bullet.rotation);
-        }
-        #endregion
-
-        #region Private methods
-        private void CreateBloodHole(Collision2D collision, Transform bullet)
-        {
-            var offset = Random.Range(0, 0.7f);
-            var position = bullet.position + bullet.right * offset;
-
-            var ass = Physics2D.CircleCastAll(position, 0.1f, Vector2.zero);
-
-            print(ass.Length);
-
-            for (int i = 0; i < ass.Length; i++)
-            {
-                Instantiate(bloodHolePrefab, position, Quaternion.identity, ass[i].transform);
-            }
+            bloodPool.Create(bullet.position + offset, bullet.rotation);
         }
         #endregion
     }

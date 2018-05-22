@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using Core;
+using Core.Heroes;
 
 namespace UI.GUI
 {
@@ -46,7 +47,6 @@ namespace UI.GUI
             GameCore.GameEndingEvent += ShowGameOverPanel;
             Hero.HpChangedEvent += Hero_HpChangedEvent;
             Hero.AmmoChangedEvent += Hero_AmmoChangedEvent;
-
             GameCore.GameDrawEvent += ShowDrawPanel;
         }
 
@@ -59,11 +59,9 @@ namespace UI.GUI
             GameCore.GameEndingEvent -= ShowGameOverPanel;
             Hero.HpChangedEvent -= Hero_HpChangedEvent;
             Hero.AmmoChangedEvent -= Hero_AmmoChangedEvent;
-
             GameCore.GameDrawEvent -= ShowDrawPanel;
         }
         #endregion
-
         #region Private methods
         private void Hero_AmmoChangedEvent(Hero hero, int currentAmmo, int maxAmmo)
         {
@@ -121,20 +119,19 @@ namespace UI.GUI
 
         private IEnumerator HidePromptsRoutine()
         {
-            const float step = 0.01f;
             var aimColor = AimAreasOutline.color;
             var heroColor = HeroAreasOutline.color;
             var shootColor = ShootAreasOutline.color;
 
             while (aimColor.a > 0 || heroColor.a > 0 || shootColor.a > 0)
             {
-                aimColor.a -= step;
+                aimColor.a -= Helps.HidingStartRoundPromptsStep;
                 AimAreasOutline.color = aimColor;
 
-                heroColor.a -= step;
+                heroColor.a -= Helps.HidingStartRoundPromptsStep;
                 HeroAreasOutline.color = heroColor;
 
-                shootColor.a -= step;
+                shootColor.a -= Helps.HidingStartRoundPromptsStep;
                 ShootAreasOutline.color = shootColor;
 
                 yield return null;
@@ -159,15 +156,15 @@ namespace UI.GUI
             StopCoroutine(hidePrompts);
 
             var aimColor = AimAreasOutline.color;
-            aimColor.a = 0.4f; //~100 (more precisely 102)  
+            aimColor.a = Helps.AreasPromptsDefaultAlpha;
             AimAreasOutline.color = aimColor;
 
             var heroColor = HeroAreasOutline.color;
-            heroColor.a = 0.4f;
+            heroColor.a = Helps.AreasPromptsDefaultAlpha;
             HeroAreasOutline.color = heroColor;
 
             var shootColor = ShootAreasOutline.color;
-            shootColor.a = 0.4f;
+            shootColor.a = Helps.AreasPromptsDefaultAlpha;
             ShootAreasOutline.color = shootColor;
         }
 
@@ -176,6 +173,7 @@ namespace UI.GUI
         {
             GameOverPanel.SetActive(true);
         }
+
 
         private void ShowDrawPanel()
         {

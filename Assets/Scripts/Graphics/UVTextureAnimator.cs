@@ -16,18 +16,16 @@ namespace Graphics
         private Renderer currentRenderer;
         private Material instanceMaterial;
         #endregion
-
         #region Properties
         internal Blood Blood { get; set; }
         #endregion
-
         #region Unity lifecycle
         private void Awake()
         {
             deltaFps = 1f / fps;
             count = rows * columns;
             currentRenderer = GetComponent<Renderer>();
-            currentRenderer.sortingOrder = 100;
+            currentRenderer.sortingOrder = Helps.BloodSortingLayer;
         }
 
 
@@ -40,7 +38,6 @@ namespace Graphics
             }
         }
         #endregion
-
         #region Public methods
         internal void Play()
         {
@@ -50,7 +47,6 @@ namespace Graphics
             StartCoroutine(UpdateCorutine());
         }
         #endregion
-
         #region Private methods
         private void ResetToDefault()
         {
@@ -60,11 +56,10 @@ namespace Graphics
             instanceMaterial = currentRenderer.material;
 
             var size = new Vector2(1f / columns, 1f / rows);
-            instanceMaterial.SetTextureScale("_MainTex", size);
+            instanceMaterial.SetTextureScale(Helps.BloodTexture, size);
 
             var offset = Vector3.zero;
-            instanceMaterial.SetTextureOffset("_MainTex", offset);
-
+            instanceMaterial.SetTextureOffset(Helps.BloodTexture, offset);
         }
 
 
@@ -101,7 +96,7 @@ namespace Graphics
 
             if (currentRenderer != null)
             {
-                instanceMaterial.SetTextureOffset("_MainTex", offset);
+                instanceMaterial.SetTextureOffset(Helps.BloodTexture, offset);
             }
         }
         #endregion

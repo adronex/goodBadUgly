@@ -5,13 +5,10 @@ namespace Graphics
     public class BloodHolePool
     {
         #region Fields
-        private int MAX_BLOOD = 30;
-
         private GameObject[] bloodHoles;
         private GameObject bloodHolesStorage;
         private int currentIndex;
         #endregion
-
         #region Public methods
         internal BloodHolePool(GameObject bloodHolePrefab)
         {
@@ -21,45 +18,51 @@ namespace Graphics
             {
                 bloodHolesStorage = new GameObject
                 {
-                    name = "BloodHolesStorage"
+                    name = Helps.BloodHoleStorageName
                 };
+                bloodHolesStorage.SetActive(false);
             }
 
-            bloodHoles = new GameObject[MAX_BLOOD];
-            for (int i = 0; i < MAX_BLOOD; i++)
+            bloodHoles = new GameObject[Helps.BloodHoleLimit];
+            for (int i = 0; i < Helps.BloodHoleLimit; i++)
             {
                 bloodHoles[i] = Object.Instantiate(bloodHolePrefab, bloodHolesStorage.transform);
-                bloodHoles[i].SetActive(false);
             }
         }
 
 
-        internal void Create(Transform bullet)
+        internal void Create(Vector3 position)
         {
-            var offset = Random.Range(0, 0.7f);
-            var position = bullet.position + bullet.right * offset * 50 * Time.deltaTime;
-
-            var ass = Physics2D.CircleCastAll(position, 0.1f, Vector2.zero);
-
-            for (int i = 0; i < ass.Length; i++)
+            var bodyParts = Physics2D.CircleCastAll(position, Helps.BloodCreateRadius, Vector2.zero);
+            var bodyPartsLength = bodyParts.Length;
+            for (int index = 0; index < bodyPartsLength; index++)
             {
                 var bloodHole = GetNext();
 
                 bloodHole.transform.position = position;
-                bloodHole.transform.parent = ass[i].transform;
+                bloodHole.transform.parent = bodyParts[index].transform;
 
-                if (!bloodHoles[i].activeSelf)
+                var bodyPartMask = bodyParts[index].transform.GetComponent<SpriteMask>();
+                if (bodyPartMask == null)
                 {
-                    bloodHoles[i].SetActive(true);
+                    continue;
                 }
+
+                var bloodRenderer = bloodHole.GetComponent<SpriteRenderer>();
+                if (bloodRenderer)
+                {
+                    continue;
+                }
+
+                bloodRenderer.sortingLayerID = bodyPartMask.frontSortingLayerID;
+                bloodRenderer.sortingOrder = bodyPartMask.frontSortingOrder - Helps.BloodHoleSortingLayerOffset;
             }
         }
         #endregion
-
         #region Private methods
         private GameObject GetNext()
         {
-            if (currentIndex >= MAX_BLOOD)
+            if (currentIndex >= Helps.BloodHoleLimit)
             {
                 currentIndex = 0;
             }
